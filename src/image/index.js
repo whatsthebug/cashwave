@@ -1,0 +1,5 @@
+export { default as profile } from "./profile.svg"
+export { default as bank } from "./bank.svg"
+export { default as notifications } from "./notifications.svg"
+export { default as help } from "./help.svg"
+export { default as profile2 } from "./profile2.svg"

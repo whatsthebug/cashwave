@@ -1,0 +1,12 @@
+  .auth-container {
+    animation: slide 0.5s ease-in;
+  }
+  
+  @keyframes slide {
+    from {
+      transform: translateX(50%);
+    }
+    to {
+        transform: translateX(0);
+    }
+  }  
