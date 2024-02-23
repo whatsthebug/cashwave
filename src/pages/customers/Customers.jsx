@@ -387,90 +387,88 @@ const Customers = () => {
                     </div> */}
                   </div>
                 </div>
-                {custDetails.topInfo.aproovedStatus ? (
-                  <div>
-                    <div className="flex flex-row ml-5 mt-3">
-                      <div className="block">
-                        <span className="2xl:text-3xl text-2xl text-left font-extrabold mr-auto">
-                          Credit Limit
-                        </span>
-                      </div>
-                      <div className="block ml-auto p-5 mr-3 text-left">
-                        <span className="text-sm 2xl:text-base font-normal">
-                          Available Limit-₹
-                          {custDetails.creditLimit - custDetails.creditUsed}
-                        </span>
-                      </div>
+                {/* {custDetails.topInfo.aproovedStatus ? ( */}
+                <div>
+                  <div className="flex flex-row ml-5 mt-3">
+                    <div className="block">
+                      <span className="2xl:text-3xl text-2xl text-left font-extrabold mr-auto">
+                        Credit Limit
+                      </span>
                     </div>
-                    <div className="flex flex-row w-full justify-center items-center">
-                      <div className="block relative">
-                        <Progress
-                          percent={
-                            (custDetails.creditUsed / custDetails.creditLimit) *
-                            100
-                          }
-                          size={[600, 30]}
-                          showInfo={false}
-                        />
-                        {custDetails.creditUsed > 0 &&
-                        custDetails.creditUsed < custDetails.creditLimit ? (
-                          <span
-                            style={{
-                              position: "absolute",
-                              top: "50%",
-                              left: `${
-                                (custDetails.creditUsed /
-                                  custDetails.creditLimit) *
-                                100
-                              }%`,
-                              transform: "translate(-50%, -50%)",
-                              fontSize: "14px",
-                              color: "#000",
-                              marginTop: "20px",
-                            }}
-                          >
-                            ₹{custDetails.creditUsed}
-                          </span>
-                        ) : null}
-                      </div>
+                    <div className="block ml-auto p-5 mr-3 text-left">
+                      <span className="text-sm 2xl:text-base font-normal">
+                        Available Limit-₹
+                        {custDetails.creditLimit - custDetails.creditUsed}
+                      </span>
                     </div>
-                    <div className="flex flex-row w-full mt-2">
-                      <div className="block text-sm 2xl:text-base ml-4">
-                        ₹00
-                      </div>
-                      <div className="block ml-auto text-sm 2xl:text-base mr-8">
-                        ₹{custDetails.creditLimit}
-                      </div>
-                    </div>
-                    <div className="flex flex-row ml-5 mt-3 ">
-                      <div className="block">
-                        <span className="text-2xl 2xl:text-3xl text-left font-extrabold mr-auto">
-                          Ongoing Transactions
-                        </span>
-                      </div>
-                    </div>
-                    {custDetails.creditUsed ? (
-                      <div className="w-[600px] h-[55px] bg-lightBlue border-1 border-solid border-blue rounded-lg flex flex-row items-center ml-6 mt-6">
-                        <span className="text-base 2xl:text-lg ml-5">
-                          Transaction ID - {custDetails.onGoingTreatments}
-                        </span>
-                        <span className="ml-auto mr-5 text-red text-base 2xl:text-lg ">
-                          Pending
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="flex flex-row w-full mt-8 mb-10 justify-center items-center 2xl:text-lg text-base">
-                        <div className="block">No Ongoing Transactions</div>
-                      </div>
-                    )}
                   </div>
-                ) : (
-                  <div className="w-[600px] h-[55px] bg-lightYellow border-1 border-solid border-yellow rounded-lg flex flex-row items-center ml-6">
-                    <span className="text-base 2xl:text-lg text-yellow ml-5">
-                      The Account is under processing.
-                    </span>
+                  <div className="flex flex-row w-full justify-center items-center">
+                    <div className="block relative">
+                      <Progress
+                        percent={
+                          (custDetails.creditUsed / custDetails.creditLimit) *
+                          100
+                        }
+                        size={[600, 30]}
+                        showInfo={false}
+                      />
+                      {custDetails.creditUsed > 0 &&
+                      custDetails.creditUsed < custDetails.creditLimit ? (
+                        <span
+                          style={{
+                            position: "absolute",
+                            top: "50%",
+                            left: `${
+                              (custDetails.creditUsed /
+                                custDetails.creditLimit) *
+                              100
+                            }%`,
+                            transform: "translate(-50%, -50%)",
+                            fontSize: "14px",
+                            color: "#000",
+                            marginTop: "20px",
+                          }}
+                        >
+                          ₹{custDetails.creditUsed}
+                        </span>
+                      ) : null}
+                    </div>
                   </div>
-                )}
+                  <div className="flex flex-row w-full mt-2">
+                    <div className="block text-sm 2xl:text-base ml-4">₹00</div>
+                    <div className="block ml-auto text-sm 2xl:text-base mr-8">
+                      ₹{parseInt(custDetails.creditLimit)}
+                    </div>
+                  </div>
+                  <div className="flex flex-row ml-5 mt-3 ">
+                    <div className="block">
+                      <span className="text-2xl 2xl:text-3xl text-left font-extrabold mr-auto">
+                        Ongoing Transactions
+                      </span>
+                    </div>
+                  </div>
+                  {custDetails.creditUsed ? (
+                    <div className="w-[600px] h-[55px] bg-lightBlue border-1 border-solid border-blue rounded-lg flex flex-row items-center ml-6 mt-6">
+                      <span className="text-base 2xl:text-lg ml-5">
+                        Transaction ID - {custDetails.onGoingTreatments}
+                      </span>
+                      <span className="ml-auto mr-5 text-red text-base 2xl:text-lg ">
+                        Pending
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex flex-row w-full mt-8 mb-10 justify-center items-center 2xl:text-lg text-base">
+                      <div className="block">No Ongoing Transactions</div>
+                    </div>
+                  )}
+                </div>
+                {/* // ) : (
+                //   <div className="w-[600px] h-[55px] bg-lightYellow border-1 border-solid border-yellow rounded-lg flex flex-row items-center ml-6">
+                //     <span className="text-base 2xl:text-lg text-yellow ml-5">
+                //       The Account is under processing.
+                //     </span>
+                //   </div>
+                // )} */}
               </div>
             )}
           </Drawer>

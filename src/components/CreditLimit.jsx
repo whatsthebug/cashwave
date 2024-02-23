@@ -163,8 +163,8 @@ const CreditLimit = ({ onClose }) => {
                 firstButton="CANCEL"
                 secondButton="NEXT"
                 firstButtonHandleClick={onClose}
-                secondButtonHandleClick={() => setOnOpenPanDrawer(true)}
-                isSubmit={false}
+                secondButtonHandleClick={null}
+                isSubmit={true}
               />
             </div>
           </div>

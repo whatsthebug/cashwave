@@ -38,19 +38,21 @@ const NewCustomer = ({ onClose, custDetails }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-    console.log(info.dob);
+    // console.log(info.dob);
     try {
-      let parameters = info.dob.split("-");
-      let dob = parameters[1] + "/" + parameters[0] + "/" + parameters[2];
+      // let parameters = info.dob.split("-");
+      // let dob = parameters[1] + "/" + parameters[0] + "/" + parameters[2];
 
       const response = await axios.patch(
         `${baseUrl}/Hospitals/add`,
         {
           name: info.name,
           phone: info.phone,
-          dob: dob,
-          maritialStatus: info.maritialStatus,
-          employmentType: info.employmentType,
+          line1: info.line1,
+          line2: info.line2,
+          state: info.state,
+          city: info.city,
+          pincode: info.pincode,
         },
         {
           headers: {
@@ -59,12 +61,12 @@ const NewCustomer = ({ onClose, custDetails }) => {
           withCredentials: "include",
         }
       );
-      sessionStorage.setItem("employmentType", info.employmentType);
+      // sessionStorage.setItem("employmentType", info.employmentType);
       const json = response.data;
       console.log(json);
 
       if (json.status === "Success") {
-        setVerifyKey(json.details);
+        // setVerifyKey(json.details);
         setVerifyOtpDrawer(true);
       }
     } catch (err) {
@@ -293,8 +295,8 @@ const NewCustomer = ({ onClose, custDetails }) => {
                   firstButton="CANCEL"
                   secondButton="NEXT"
                   firstButtonHandleClick={onClose}
-                  secondButtonHandleClick={() => setVerifyOtpDrawer(true)}
-                  isSubmit={false}
+                  secondButtonHandleClick={null}
+                  isSubmit={true}
                 />
               </div>
             </div>
