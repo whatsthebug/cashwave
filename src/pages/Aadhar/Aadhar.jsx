@@ -121,20 +121,6 @@ const Aadhar = ({ onClose }) => {
                 isSubmit={true}
               />
             </div>
-            {/* <div className="flex justify-end ">
-              <button
-                className=" bg-white text-blue border-solid border-1 border-aliceblue rounded-xl w-[150px] h-[55px] mx-1 bottom-1 cursor-pointer transition duration-300 ease-in-out hover:bg-lightBlue"
-                onClick={onClose}
-              >
-                <span className="2xl:text-lg text-base font-bold">CANCEL</span>
-              </button>
-              <button
-                className=" bg-blue text-white border-solid border-1 border-lightBlue rounded-xl w-[150px] h-[55px] mr-5 ml-2 bottom-1 cursor-pointer transition duration-300 ease-in-out hover:bg-darkBlue"
-                type="submit"
-              >
-                <span className="2xl:text-lg text-base font-bold">VERIFY</span>
-              </button>
-            </div> */}
           </div>
         </form>
       </Drawer>

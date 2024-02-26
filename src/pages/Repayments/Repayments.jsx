@@ -13,6 +13,8 @@ import "yet-another-react-lightbox/styles.css";
 import Download from "yet-another-react-lightbox/plugins/download";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import Footer from "../../components/Footer";
+import { io } from "socket.io-client";
+import CustomButton from "../../components/CustomButton";
 const Repayment = () => {
   const [selectCustomer, setSelectCustomer] = React.useState(false);
   const [showCustomerdDtails, setShowCustomerdDtails] = React.useState(false);
@@ -26,16 +28,10 @@ const Repayment = () => {
   const { baseUrl } = React.useContext(FormContext);
   const [openLightbox, setOpenLightbox] = React.useState(false);
   const [invoice, setInvoice] = useState(null);
+  const [paramIds, setParams] = useState("");
+  const [IdAmt, setEmiAmt] = useState("");
+  const [totalPay, setTotalPay] = useState(0);
 
-  const handleApprove = () => {
-    setShowApproved(true);
-    setShowCreditsLimit(false);
-  };
-
-  const onFundAccount = () => {
-    setSelectCustomer(false);
-    setShowCreditsLimit(true);
-  };
   // const offCanvasRef = React.useRef(null);
 
   // useEffect(() => {
@@ -62,6 +58,97 @@ const Repayment = () => {
     setShowCustomerdDtails(false);
   };
 
+  const socketRef = React.useRef(null);
+
+  const handleApprove = () => {
+    setShowApproved(true);
+    setShowCreditsLimit(false);
+  };
+
+  const connectSocket = (idd) => {
+    const serverURL = `ws://localhost:8000/?trnId=%23${idd}`;
+    const socket = io(serverURL);
+    socket.on("message", (data) => {
+      console.log("Received message:", data);
+    });
+  };
+
+  const handleFunds = () => {
+    setShowCreditsLimit(true);
+    onFundAccount();
+  };
+  const [fundData, setFund] = useState(null);
+
+  console.log(socketRef.current);
+  // useEffect(() => {
+  //   if (socketRef.current) {
+  //     console.log(fundData, "checking");
+  //     socketRef.current.on("credited", (data) => {
+  //       console.log("credited");
+  //       const newFundData = Object.assign({}, fundData, {
+  //         data: {
+  //           ...fundData.data,
+  //           amountReceived: data.amount,
+  //         },
+  //       });
+  //       console.log(newFundData);
+  //       setFund(newFundData);
+  //     });
+  //   }
+  // }, [socketRef]);
+  if (socketRef.current) {
+    socketRef.current.on("credited", (data) => {
+      const newFundData = Object.assign({}, fundData, {
+        data: {
+          ...fundData.data,
+          amountReceived: data.amount,
+        },
+      });
+      setFund(newFundData);
+      if (data.amount >= IdAmt) {
+        socketRef.current.close();
+      }
+    });
+  }
+
+  const getFundDetails = async () => {
+    const fundId = paramIds.replace("#", "");
+    console.log("Fund ID===>", fundId);
+    try {
+      const response = await axios.get(
+        `${baseUrl}/Hospitals/getvirtualaccount?trnId=%23${fundId}&amount=${totalPay}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      setFund(response.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const onFundAccount = () => {
+    console.log("socket api is going call");
+    const socket = io(`${baseUrl}`, {
+      withCredentials: true,
+      query: {
+        // Add your parameters here as key-value pairs
+        trnId: paramIds,
+      }, // Use WebSockets
+      // auth: {
+      //   token:`Bearer ${localStorage.getItem("token")}`
+      // },
+      extraHeaders: {
+        token: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+    socketRef.current = socket;
+    getFundDetails();
+    // setSelectClient(false);
+  };
+
   const [emiData, setEmi] = useState(null);
   const [allEmi, setAllEmis] = useState(null);
   // console.log("Length of all EMI",Object.values(allEmi).length);
@@ -69,6 +156,7 @@ const Repayment = () => {
 
   const handleClick = async (id) => {
     console.log("Params id", id);
+    setParams(id);
     setSelectCustomer(!selectCustomer);
     var paramId = id.replace("#", "");
     try {
@@ -493,7 +581,6 @@ const Repayment = () => {
                 <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
             </div>
-
             <div className="flex flex-row ml-5 mt-3">
               <span className="text-2xl 2xl:text-3xl font-extrabold mt-4">
                 Customer Details
@@ -508,71 +595,72 @@ const Repayment = () => {
               </>
             ) : (
               <>
-                <div className="flex w-[600px] py-8 flex-col border-solid border-1 bg-lightBlue border-aliceblue rounded-lg m-4">
-                  <div className="flex flex-row w-full">
-                    {/* <div className="flex w-[75px] h-[75px] rounded-full overflow-hidden ml-[20px] items-start">
+                <div className="w-full pb-28">
+                  <div className="flex w-[600px] py-8 flex-col border-solid border-1 bg-lightBlue border-aliceblue rounded-lg m-4">
+                    <div className="flex flex-row w-full">
+                      {/* <div className="flex w-[75px] h-[75px] rounded-full overflow-hidden ml-[20px] items-start">
                       <img
                         className="w-[75px] h-[75px]"
                         src={`${process.env.REACT_APP_API_URL_IMAGE}/${emiData.customerId.profileImage}`}
                         alt="user"
                       />
                     </div> */}
-                    <div className="flex flex-col m-4 pl-3">
-                      <span className="2xl:text-xl text-lg text-left font-semibold mr-auto">
-                        {emiData ? emiData.customerId.name : "-"}
-                      </span>
-                      {emiData ? emiData.customerId.phone : "-"}
+                      <div className="flex flex-col m-4 pl-3">
+                        <span className="2xl:text-xl text-lg text-left font-semibold mr-auto">
+                          {emiData ? emiData.customerId.name : "-"}
+                        </span>
+                        {emiData ? emiData.customerId.phone : "-"}
+                      </div>
+
+                      <div></div>
                     </div>
 
-                    <div></div>
-                  </div>
-
-                  <div className="flex flex-col w-full mt-8">
-                    <div className="flex flex-row justify-around">
-                      <div className="flex flex-col max-w-[60%] w-full justify-start items-center mr-auto ml-5 pr-4">
-                        <span className="text-base 2xl:text-lg text-left font-semibold mr-auto m-1 ">
-                          Address Line1
-                        </span>
-                        <span className="text-base 2xl:text-lg font-normal mr-auto m-1">
-                          {emiData
-                            ? emiData.customerId.customerLocation.line1
-                            : "-"}
-                        </span>
+                    <div className="flex flex-col w-full mt-8">
+                      <div className="flex flex-row justify-around">
+                        <div className="flex flex-col max-w-[60%] w-full justify-start items-center mr-auto ml-5 pr-4">
+                          <span className="text-base 2xl:text-lg text-left font-semibold mr-auto m-1 ">
+                            Address Line1
+                          </span>
+                          <span className="text-base 2xl:text-lg font-normal mr-auto m-1">
+                            {emiData
+                              ? emiData.customerId.customerLocation.line1
+                              : "-"}
+                          </span>
+                        </div>
+                        <div className="flex flex-col items-center max-w-[40%] w-full justify-start pr-8">
+                          <span className="text-base 2xl:text-lg text-left font-semibold mr-auto m-1">
+                            Address Line2
+                          </span>
+                          <span className="text-base 2xl:text-lg font-normal mr-auto m-1">
+                            {emiData
+                              ? emiData.customerId.customerLocation.line2
+                              : "-"}
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex flex-col items-center max-w-[40%] w-full justify-start pr-8">
-                        <span className="text-base 2xl:text-lg text-left font-semibold mr-auto m-1">
-                          Address Line2
-                        </span>
-                        <span className="text-base 2xl:text-lg font-normal mr-auto m-1">
-                          {emiData
-                            ? emiData.customerId.customerLocation.line2
-                            : "-"}
-                        </span>
+                      <div className="flex flex-row w-full justify-around mt-7">
+                        <div className="flex flex-col max-w-[60%] w-full justify-start items-center mr-auto ml-5 pr-4">
+                          <span className="text-base 2xl:text-lg text-left font-semibold mr-auto m-1">
+                            City
+                          </span>
+                          <span className="text-base 2xl:text-lg font-normal mr-auto m-1">
+                            {emiData
+                              ? emiData.customerId.customerLocation.city
+                              : "-"}
+                          </span>
+                        </div>
+                        <div className="flex flex-col items-center max-w-[40%] w-full justify-start pr-8">
+                          <span className="text-base 2xl:text-lg text-left font-semibold mr-auto m-1">
+                            State
+                          </span>
+                          <span className="text-base 2xl:text-lg text-left font-normal mr-auto m-1">
+                            {emiData
+                              ? emiData.customerId.customerLocation.state
+                              : "-"}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex flex-row w-full justify-around mt-7">
-                      <div className="flex flex-col max-w-[60%] w-full justify-start items-center mr-auto ml-5 pr-4">
-                        <span className="text-base 2xl:text-lg text-left font-semibold mr-auto m-1">
-                          City
-                        </span>
-                        <span className="text-base 2xl:text-lg font-normal mr-auto m-1">
-                          {emiData
-                            ? emiData.customerId.customerLocation.city
-                            : "-"}
-                        </span>
-                      </div>
-                      <div className="flex flex-col items-center max-w-[40%] w-full justify-start pr-8">
-                        <span className="text-base 2xl:text-lg text-left font-semibold mr-auto m-1">
-                          State
-                        </span>
-                        <span className="text-base 2xl:text-lg text-left font-normal mr-auto m-1">
-                          {emiData
-                            ? emiData.customerId.customerLocation.state
-                            : "-"}
-                        </span>
-                      </div>
-                    </div>
-                    {/* <div className="flex flex-row w-full justify-around mt-7">
+                      {/* <div className="flex flex-row w-full justify-around mt-7">
                       <div className="flex flex-col max-w-[60%] w-full justify-start items-center mr-auto ml-5 pr-4">
                         <span className="text-base 2xl:text-lg text-left font-semibold mr-auto m-1">
                           Pan Card No
@@ -616,29 +704,29 @@ const Repayment = () => {
                           ₹{emiData ? emiData.customerId.creditLimit : "-"}
                         </span>
                       </div> */}
-                    {/* </div> */}
-                  </div>
-                </div>
-
-                <div className="flex flex-row ml-5 mt-3">
-                  <span className="text-2xl 2xl:text-3xl font-extrabold mt-4">
-                    Transaction Details
-                  </span>
-                </div>
-                <div className="flex w-[600px] py-4 text-lg 2xl:text-xl flex-row border-solid border-1 bg-lightBlue border-aliceblue rounded-lg m-4">
-                  <div className="flex flex-col w-full mx-6">
-                    <div className="flex flex-row justify-between mb-4">
-                      <div className="flex flex-row  w-[100%] justify-between  ">
-                        <span className="text-aliceblue text-left ml-3    ">
-                          Loan Amount
-                        </span>
-                        <span className="text-aliceblue font-normal mr-3 ">
-                          ₹{emiData ? emiData.treatmentCost : "-"}
-                        </span>
-                      </div>
+                      {/* </div> */}
                     </div>
+                  </div>
 
-                    {/* <div className="flex flex-row justify-between mb-4">
+                  <div className="flex flex-row ml-5 mt-3">
+                    <span className="text-2xl 2xl:text-3xl font-extrabold mt-4">
+                      Transaction Details
+                    </span>
+                  </div>
+                  <div className="flex w-[600px] py-4 text-lg 2xl:text-xl flex-row border-solid border-1 bg-lightBlue border-aliceblue rounded-lg m-4">
+                    <div className="flex flex-col w-full mx-6">
+                      <div className="flex flex-row justify-between mb-4">
+                        <div className="flex flex-row  w-[100%] justify-between  ">
+                          <span className="text-aliceblue text-left ml-3    ">
+                            Loan Amount
+                          </span>
+                          <span className="text-aliceblue font-normal mr-3 ">
+                            ₹{emiData ? emiData.treatmentCost : "-"}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* <div className="flex flex-row justify-between mb-4">
                       <div className="flex flex-row  w-[100%] justify-between  ">
                         <span className="text-aliceblue text-left  ml-3  ">
                           Total Interest
@@ -649,70 +737,70 @@ const Repayment = () => {
                       </div>
                     </div> */}
 
-                    <div className="flex flex-row justify-between mb-4">
-                      <div className="flex flex-row  w-[100%] justify-between  ">
-                        <span className="text-aliceblue text-left  ml-3  ">
-                          Tenure(in days)
-                        </span>
-                        <span className="text-aliceblue font-normal mr-3 ">
-                          {emiData ? emiData.tenure : "-"}
-                        </span>
+                      <div className="flex flex-row justify-between mb-4">
+                        <div className="flex flex-row  w-[100%] justify-between  ">
+                          <span className="text-aliceblue text-left  ml-3  ">
+                            Tenure(in days)
+                          </span>
+                          <span className="text-aliceblue font-normal mr-3 ">
+                            {emiData ? emiData.tenure : "-"}
+                          </span>
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="flex flex-row justify-between">
-                      <div className="flex flex-row  w-[100%] justify-between  ">
-                        <span className="text-black text-left ml-3   ">
-                          Total Payable
-                        </span>
-                        <span className="text-black font-normal mr-3 ">
-                          ₹{emiData ? emiData.amount : "-"}
-                        </span>
+                      <div className="flex flex-row justify-between">
+                        <div className="flex flex-row  w-[100%] justify-between  ">
+                          <span className="text-black text-left ml-3   ">
+                            Total Payable
+                          </span>
+                          <span className="text-black font-normal mr-3 ">
+                            ₹{emiData ? emiData.amount : "-"}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="flex flex-row ml-5 mt-3">
-                  <span className="text-2xl 2xl:text-3xl font-extrabold mt-4">
-                    Payment Dates
-                  </span>
-                </div>
-                {allEmi ? (
-                  allEmi.map((emi) => (
-                    <div className="flex flex-row w-[600px] h-[50px] justify-around items-center border-solid border-1 border-blue bg-lightBlue rounded-lg ml-5 mt-4">
-                      <div className="ml-4 max-w-[20%] w-full text-base 2xl:text-lg font-semibold">
-                        {new Date(emi.date).toLocaleDateString("en-GB", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                        })}
-                      </div>
+                  <div className="flex flex-row ml-5 mt-3">
+                    <span className="text-2xl 2xl:text-3xl font-extrabold mt-4">
+                      Payment Dates
+                    </span>
+                  </div>
+                  {allEmi ? (
+                    allEmi.map((emi) => (
+                      <div className="flex flex-row w-[600px] h-[50px] justify-around items-center border-solid border-1 border-blue bg-lightBlue rounded-lg ml-5 mt-4">
+                        <div className="ml-4 max-w-[20%] w-full text-base 2xl:text-lg font-semibold">
+                          {new Date(emi.date).toLocaleDateString("en-GB", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </div>
 
-                      <div className="pl-12 text-base 2xl:text-lg font-semibold">
-                        ₹{emi.amount}
+                        <div className="pl-12 text-base 2xl:text-lg font-semibold">
+                          ₹{emi.amount}
+                        </div>
+                        <div
+                          className={
+                            emi.status === true
+                              ? "text-lg text-yellowgreen ml-auto mr-4"
+                              : "text-lg text-red ml-auto mr-4 "
+                          }
+                        >
+                          {emi.status === true ? "Settled" : "Pending"}
+                        </div>
                       </div>
-                      <div
-                        className={
-                          emi.status === true
-                            ? "text-lg text-yellowgreen ml-auto mr-4"
-                            : "text-lg text-red ml-auto mr-4 "
-                        }
-                      >
-                        {emi.status === true ? "Settled" : "Pending"}
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <h2>No Payments</h2>
-                )}
+                    ))
+                  ) : (
+                    <h2>No Payments</h2>
+                  )}
 
-                {/* <div className="flex flex-row ml-5 mt-3">
+                  {/* <div className="flex flex-row ml-5 mt-3">
                   <span className="text-2xl 2xl:text-3xl font-extrabold mt-4">
                     Merchant Details
                   </span>
                 </div> */}
-                {/* <div className="flex w-[600px] py-4 flex-col border-solid border-1 bg-lightBlue border-aliceblue rounded-lg m-4 ml-5 mr-0">
+                  {/* <div className="flex w-[600px] py-4 flex-col border-solid border-1 bg-lightBlue border-aliceblue rounded-lg m-4 ml-5 mr-0">
                   <div className="flex flex-row justify-around">
                     <div className="flex flex-col max-w-[60%] w-full justify-start items-center mr-auto ml-5 pr-4">
                       <span className="text-base 2xl:text-lg text-left font-semibold mr-auto m-1 ">
@@ -732,60 +820,159 @@ const Repayment = () => {
                     </div>
                   </div>
                 </div> */}
-                <div className="flex flex-row ml-5 mt-3">
-                  <span className="text-2xl 2xl:text-3xl font-extrabold mt-4">
-                    Invoice Details
-                  </span>
-                </div>
-                <div
-                  className="flex flex-row w-[600px] h-[50px] items-center border-solid border-1 border-blue bg-lightBlue rounded-lg ml-5 mt-4 cursor-pointer"
-                  onClick={() => {
-                    setOpenLightbox(!openLightbox);
-                    handleInvoice(emiData.invoice);
-                  }}
-                >
-                  <span className="mr-auto ml-4 text-lg font-semibold">
-                    Invoice Details
-                  </span>
-                  <span className="ml-auto mr-4">
-                    <img src={require("./arrow.png")} alt="arrow" />
-                  </span>
-                </div>
-                {openLightbox && (
-                  <div>
-                    <Lightbox
-                      open={openLightbox}
-                      slides={[{ src: invoice }]}
-                      close={() => setOpenLightbox(!openLightbox)}
-                      plugins={[Download, Zoom]}
-                      animation={{ zoom: 500 }}
-                      // zoom={{
-                      //   maxZoomPixelRatio:1,
-                      //   zoomInMultiplier:2,
-                      //   doubleTapDelay:300,
-                      //   doubleClickDelay:300,
-                      //   doubleClickMaxStops:2,
-                      //   keyboardMoveDistance:50,
-                      //   wheelZoomDistanceFactor:100,
-                      //   pinchZoomDistanceFactor:100,
-                      //   scrollToZoom:false,
+                  <div className="flex flex-row ml-5 mt-3">
+                    <span className="text-2xl 2xl:text-3xl font-extrabold mt-4">
+                      Invoice Details
+                    </span>
+                  </div>
+                  <div
+                    className="flex flex-row w-[600px] h-[50px] items-center border-solid border-1 border-blue bg-lightBlue rounded-lg ml-5 mt-4 cursor-pointer"
+                    onClick={() => {
+                      setOpenLightbox(!openLightbox);
+                      handleInvoice(emiData.invoice);
+                    }}
+                  >
+                    <span className="mr-auto ml-4 text-lg font-semibold">
+                      Invoice Details
+                    </span>
+                    <span className="ml-auto mr-4">
+                      <img src={require("./arrow.png")} alt="arrow" />
+                    </span>
+                  </div>
+                  {openLightbox && (
+                    <div>
+                      <Lightbox
+                        open={openLightbox}
+                        slides={[{ src: invoice }]}
+                        close={() => setOpenLightbox(!openLightbox)}
+                        plugins={[Download, Zoom]}
+                        animation={{ zoom: 500 }}
+                        // zoom={{
+                        //   maxZoomPixelRatio:1,
+                        //   zoomInMultiplier:2,
+                        //   doubleTapDelay:300,
+                        //   doubleClickDelay:300,
+                        //   doubleClickMaxStops:2,
+                        //   keyboardMoveDistance:50,
+                        //   wheelZoomDistanceFactor:100,
+                        //   pinchZoomDistanceFactor:100,
+                        //   scrollToZoom:false,
 
-                      // }}
-                      carousel={{
-                        finite: true,
-                        preload: 2,
-                        imageFit: "contain",
-                        padding: "16px",
-                        spacing: "16px",
-                      }}
-                      render={{
-                        buttonPrev: () => null,
-                        buttonNext: () => null,
-                        buttonZoom: () => true,
-                      }}
+                        // }}
+                        carousel={{
+                          finite: true,
+                          preload: 2,
+                          imageFit: "contain",
+                          padding: "16px",
+                          spacing: "16px",
+                        }}
+                        render={{
+                          buttonPrev: () => null,
+                          buttonNext: () => null,
+                          buttonZoom: () => true,
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+                <div className="w-[99.9%] flex flex-col justify-end bg-white  absolute bottom-0 right-0 overflow-hidden">
+                  <Divider className="bg-blue mr-auto mt-0" />
+                  <div className="flex w-[95%] justify-end mr-8 pb-6 px-4">
+                    <CustomButton
+                      firstButton="CANCEL"
+                      secondButton="NEXT"
+                      firstButtonHandleClick={onClose}
+                      secondButtonHandleClick={() => handleFunds()}
+                      isSubmit={false}
                     />
                   </div>
-                )}
+                </div>
+              </>
+            )}
+          </Drawer>
+          <Drawer
+            placement="right"
+            closable={false}
+            onClose={onCloseCredits}
+            open={showCreditsLimit}
+            key="right"
+            width={700}
+          >
+            <div className="flex mt-[10px] flex-row justify-start items-start ml-5">
+              <svg
+                className="h-8 w-8 text-black cursor-pointer"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                onClick={onCloseCredits}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                />
+              </svg>
+            </div>
+            {/* <div className="block px-5 pt-10">
+            <span className="text-4xl font-bold">Set Credit Limit</span>
+          </div> */}
+            {fundData === null ? (
+              <>
+                <div className="fixed inset-0 bg-gray-500 opacity-100 z-50"></div>
+                <div className=" flex justify-center items-center w-full h-full transition ease-in delay-300 ">
+                  <Spin size="large" />
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex flex-row ml-5 mt-3">
+                  <span className="text-2xl 2xl:text-3xl font-extrabold mt-4">
+                    Fund Account
+                  </span>
+                </div>
+
+                <div className="flex w-[600px] h-[220px] flex-col border-solid border-1 bg-lightBlue border-aliceblue rounded-lg m-5 mt-9">
+                  <div className="flex flex-col w-full mt-8">
+                    <div className="flex flex-row justify-around">
+                      <div className="flex flex-col w-[70%] justify-start items-center mr-auto ml-5">
+                        <span className="text-sm 2xl:text-base text-left font-semibold mr-auto m-1 ">
+                          Account No
+                        </span>
+                        <span className="text-sm 2xl:text-base font-normal mr-auto m-1">
+                          {fundData ? fundData.data.accountNumber : "-"}
+                        </span>
+                      </div>
+                      <div className="flex flex-col w-[35%] items-center justify-start ml-auto mr-[130px]">
+                        <span className="text-sm 2xl:text-base text-left font-semibold mr-auto m-1">
+                          IFSC Code
+                        </span>
+                        <span className="text-sm 2xl:text-base font-normal mr-auto m-1">
+                          {fundData ? fundData.data.ifsc : "-"}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex flex-row w-full justify-around mt-7">
+                      <div className="flex flex-col w-[70%] justify-start items-center mr-auto ml-5">
+                        <span className="text-sm 2xl:text-base text-left font-semibold mr-auto m-1">
+                          UPI id
+                        </span>
+                        <span className="text-sm 2xl:text-base font-normal mr-auto m-1">
+                          {fundData ? fundData.data.upiId : "-"}
+                        </span>
+                      </div>
+
+                      <div className="flex flex-col w-[35%] items-center justify-start ml-auto mr-[130px]">
+                        <span className="text-sm 2xl:text-base text-left font-semibold mr-auto m-1">
+                          Amount Received
+                        </span>
+                        <span className="text-sm 2xl:text-base font-normal mr-auto m-1">
+                          ₹{fundData ? fundData.data.amountReceived : "-"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </>
             )}
           </Drawer>
