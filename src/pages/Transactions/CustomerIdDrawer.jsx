@@ -59,8 +59,8 @@ const CustomerIdDrawer = ({ onClose, open, transaction }) => {
         ) : (
           <div>
             <div className="flex w-[600px] py-8 flex-col border-solid border-1 bg-lightBlue border-aliceblue rounded-lg m-5 relative">
-              <div className="flex flex-row w-full">
-                {/* <div className="flex w-[75px] h-[75px] ml-[20px] items-start rounded-full overflow-hidden">
+              {/* <div className="flex flex-row w-full"> */}
+              {/* <div className="flex w-[75px] h-[75px] ml-[20px] items-start rounded-full overflow-hidden">
                   <img
                     className="w-[75px] h-[75px] "
                     src={`${process.env.REACT_APP_API_URL_IMAGE}/${transaction?.customerData?.profileImage}`}
@@ -68,16 +68,34 @@ const CustomerIdDrawer = ({ onClose, open, transaction }) => {
                     alt="user"
                   />
                 </div> */}
-                <div className="flex flex-col mx-4 mt-3 pl-3">
+              {/* <div className="flex flex-col mx-4 mt-3 pl-3">
                   <span className="2xl:text-lg text-base text-left font-semibold mr-auto">
                     {transaction?.customerData?.name}
                   </span>
                   <span className="2xl:text-base text-sm font-normal">
                     {transaction?.customerData?.phone}
                   </span>
+                </div> */}
+              <div className="flex flex-row w-full">
+                <div className="flex flex-col max-w-[60%] w-full justify-start items-center mr-auto ml-5 pr-4">
+                  <span className="text-base 2xl:text-lg text-left font-semibold mr-auto m-1 ">
+                    Name
+                  </span>
+                  <span className="text-base 2xl:text-lg font-normal mr-auto m-1">
+                    {transaction?.customerData?.name}
+                  </span>
+                </div>
+                <div className="flex flex-col items-center max-w-[40%] w-full justify-start pr-8">
+                  <span className="text-base 2xl:text-lg text-left font-semibold mr-auto m-1">
+                    Phone Number
+                  </span>
+                  <span className="text-base 2xl:text-lg font-normal mr-auto m-1">
+                    {transaction?.customerData?.phone}
+                  </span>
                 </div>
               </div>
-              <div className="flex flex-col mt-4 w-full 2xl:text-lg text-base">
+              {/* </div> */}
+              <div className="flex flex-col mt-8 w-full 2xl:text-lg text-base">
                 <div className="flex flex-row justify-around">
                   <div className="flex flex-col max-w-[60%] w-full justify-start items-center mr-auto ml-5 pr-4">
                     <span className=" text-left font-semibold mr-auto m-1 ">

@@ -167,8 +167,8 @@ const Customers = () => {
           {loading ? (
             <div className="grid grid-cols-2 align-middle py-[40px] px-[40px] 2xl:px-[68px] gap-5">
               <div className="flex max-w-[765px] w-full h-[90px] border-1 border-solid border-aliceblue bg-white rounded-lg items-center cursor-pointer transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-98 duration-300">
-                <div className="w-[55px] h-[55px] ml-[20px] rounded-full shimmer" />
-                <div className="flex flex-col justify-center items-center p-6">
+                {/* <div className="w-[55px] h-[55px] ml-[20px] rounded-full shimmer" /> */}
+                <div className="flex flex-col justify-center items-start p-6">
                   <div className="w-[180px] h-[20px] mb-1 shimmer" />
                   <div className="w-[150px] h-[18px] shimmer" />
                 </div>
@@ -177,8 +177,8 @@ const Customers = () => {
                 </div>
               </div>
               <div className="flex max-w-[765px] w-full h-[90px] border-1 border-solid border-aliceblue bg-white rounded-lg items-center cursor-pointer transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-98 duration-300">
-                <div className="w-[55px] h-[55px] ml-[20px] rounded-full shimmer" />
-                <div className="flex flex-col justify-center items-center p-6">
+                {/* <div className="w-[55px] h-[55px] ml-[20px] rounded-full shimmer" /> */}
+                <div className="flex flex-col justify-center items-start p-6">
                   <div className="w-[180px] h-[20px] mb-1 shimmer" />
                   <div className="w-[150px] h-[18px] shimmer" />
                 </div>
@@ -305,7 +305,7 @@ const Customers = () => {
                         alt="user"
                       />
                     </div> */}
-                    <div className="flex flex-col m-4 pl-3">
+                    {/* <div className="flex flex-col m-4 pl-3">
                       <span className="text-base 2xl:text-lg text-left font-semibold mr-auto">
                         {custDetails.topInfo.name
                           ? custDetails.topInfo.name
@@ -316,6 +316,24 @@ const Customers = () => {
                           ? custDetails.topInfo.phone
                           : ""}
                       </span>
+                    </div> */}
+                    <div className="flex flex-row w-full">
+                      <div className="flex flex-col max-w-[60%] w-full justify-start items-center mr-auto ml-5 pr-4">
+                        <span className="text-base 2xl:text-lg text-left font-semibold mr-auto m-1 ">
+                          Name
+                        </span>
+                        <span className="text-base 2xl:text-lg font-normal mr-auto m-1">
+                          {custDetails ? custDetails.topInfo.name : "-"}
+                        </span>
+                      </div>
+                      <div className="flex flex-col items-center max-w-[40%] w-full justify-start pr-9">
+                        <span className="text-base 2xl:text-lg text-left font-semibold mr-auto m-1">
+                          Phone Number
+                        </span>
+                        <span className="text-base 2xl:text-lg font-normal mr-auto m-1">
+                          {custDetails ? custDetails.topInfo.phone : "-"}
+                        </span>
+                      </div>
                     </div>
                   </div>
                   <div className="flex flex-col w-full mt-8 text-base 2xl:text-lg relative">

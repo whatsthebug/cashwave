@@ -181,6 +181,7 @@ const Repayment = () => {
   const onCloseCredits = () => {
     setShowCreditsLimit(false);
     setSelectCustomer(true);
+    setFund(null);
   };
 
   const [repayData, setRepayData] = useState([]);
@@ -605,17 +606,33 @@ const Repayment = () => {
                         alt="user"
                       />
                     </div> */}
-                      <div className="flex flex-col m-4 pl-3">
+                      {/* <div className="flex flex-col m-4 pl-3 gap-y-1">
                         <span className="2xl:text-xl text-lg text-left font-semibold mr-auto">
                           {emiData ? emiData.customerId.name : "-"}
                         </span>
-                        {emiData ? emiData.customerId.phone : "-"}
+                        <span>{emiData ? emiData.customerId.phone : "-"}</span>
+                      </div> */}
+                    </div>
+                    <div className="flex flex-row w-full">
+                      <div className="flex flex-col max-w-[60%] w-full justify-start items-center mr-auto ml-5 pr-4">
+                        <span className="text-base 2xl:text-lg text-left font-semibold mr-auto m-1 ">
+                          Name
+                        </span>
+                        <span className="text-base 2xl:text-lg font-normal mr-auto m-1">
+                          {emiData ? emiData.customerId.name : "-"}
+                        </span>
                       </div>
-
-                      <div></div>
+                      <div className="flex flex-col items-center max-w-[40%] w-full justify-start pr-8">
+                        <span className="text-base 2xl:text-lg text-left font-semibold mr-auto m-1">
+                          Phone Number
+                        </span>
+                        <span className="text-base 2xl:text-lg font-normal mr-auto m-1">
+                          {emiData ? emiData.customerId.phone : "-"}
+                        </span>
+                      </div>
                     </div>
 
-                    <div className="flex flex-col w-full mt-8">
+                    <div className="flex flex-col w-full mt-7 ">
                       <div className="flex flex-row justify-around">
                         <div className="flex flex-col max-w-[60%] w-full justify-start items-center mr-auto ml-5 pr-4">
                           <span className="text-base 2xl:text-lg text-left font-semibold mr-auto m-1 ">

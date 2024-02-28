@@ -19,6 +19,13 @@ import Transaction from "../pages/Transactions/Transaction";
 import Setting from "../pages/Settings/Setting";
 import Repayment from "../pages/Repayments/Repayments";
 import CustomerRegistration from "../pages/customerRegistration/CustomerRegistration";
+import PanCard from "../pages/panCard/PanCard";
+import BankStatements from "../pages/bankStatement/BankStatements";
+import PartnershipDeeds from "../pages/PartnershipDeeds/PartnershipDeeds";
+import CompanyPan from "../pages/CompanyPan/CompanyPan";
+import RegistrationProof from "../pages/registrationProof/RegistrationProof";
+import MerchantAadhaar from "../pages/merchantAadhar/MerchantAadhaar";
+import MerchantAadhaarOtp from "../pages/MerchantAadhaarOtp/MerchantAadhaarOtp";
 const PrivateRoute = () => {
   const isAuthenticated = localStorage.getItem("token") ? true : false;
   return isAuthenticated ? <Outlet /> : <Navigate to="/login" />;
@@ -34,7 +41,7 @@ const SmallScreenRoutes = () => {
       <Route exact path="/addaccount" element={<AddAccount />} />
       <Route exact path="/settlements" element={<Settlements />} />
       {/* <Route exact path="/custregister" element={<PrivateRoute />}> */}
-        <Route exact path="/custregister" element={<CustomerRegistration />} />
+      <Route exact path="/custregister" element={<CustomerRegistration />} />
       {/* </Route> */}
       {/* <Route exact path="/cred" element={<ThankYou/>} /> */}
     </Routes>
@@ -67,6 +74,34 @@ const Router = () => {
             <Route exact path="/addhosploc" element={<HospitalLocation />} />
             <Route exact path="/addaccount" element={<AddAccount />} />
             <Route exact path="/settlements" element={<Settlements />} />
+            <Route exact path="/addPanCard" element={<PanCard />} />
+            <Route
+              exact
+              path="/addBankStatements"
+              element={<BankStatements />}
+            />
+            <Route
+              exact
+              path="/addPartnershipDeeds"
+              element={<PartnershipDeeds />}
+            />
+            <Route exact path="/addCompanyPan" element={<CompanyPan />} />
+            <Route
+              exact
+              path="/addRegistrationProof"
+              element={<RegistrationProof />}
+            />
+            <Route
+              exact
+              path="/addMerchantAadhar"
+              element={<MerchantAadhaar />}
+            />
+            <Route
+              exact
+              path="/addAadhaarOtp"
+              element={<MerchantAadhaarOtp />}
+            />
+
             {/* <Route exact path="/treatments" element={<Treatments/>}/> */}
             {/* <PrivateRoute exact path="/dashboard" element={HospitalHome} isAuthenticated={isAuthenticated}/> */}
             <Route exact path="/dashboard" element={<PrivateRoute />}>

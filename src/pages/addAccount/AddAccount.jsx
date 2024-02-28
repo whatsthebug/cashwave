@@ -7,7 +7,7 @@ const AddAccount = () => {
   const [bankDetails, setBankDetails] = React.useState({ accno: "", ifsc: "" });
   const [submitting, setSubmitting] = React.useState(false);
   const [confirmAccno, setConfirmAccno] = React.useState("");
-  const { baseUrl } = React.useContext(FormContext)
+  const { baseUrl } = React.useContext(FormContext);
 
   let navigate = useNavigate();
   const showError = (err) => {
@@ -19,12 +19,11 @@ const AddAccount = () => {
     e.preventDefault();
 
     setSubmitting(true);
-    if(bankDetails.accno !== confirmAccno)
-    {
-      setSubmitting(false)
-      toast.error("Account numbers do not match. Please try again.",{
-        position:"top-right"
-      })
+    if (bankDetails.accno !== confirmAccno) {
+      setSubmitting(false);
+      toast.error("Account numbers do not match. Please try again.", {
+        position: "top-right",
+      });
       return;
     }
     try {
@@ -45,13 +44,11 @@ const AddAccount = () => {
       const json = await response.data;
       console.log(json);
       if (json.status === "Success") {
-        navigate("/homepage");
-      }
-      else
-      {
-        toast.error(json.message,{
-          position:"top-right"
-        })
+        navigate("/addMerchantAadhar");
+      } else {
+        toast.error(json.message, {
+          position: "top-right",
+        });
       }
     } catch (err) {
       showError(err.response.data.message);
@@ -71,7 +68,7 @@ const AddAccount = () => {
           ></div>
         )}
         <div className="hidden md:block w-[70vw] h-full top-0 bottom-0 left-0 fixed">
-        <div className="bg-blue opacity-40 inset-0 fixed"></div>
+          <div className="bg-blue opacity-40 inset-0 fixed"></div>
           <img
             src={require("../../image/bg_login.png")}
             alt="bgimage"
@@ -91,8 +88,7 @@ const AddAccount = () => {
               Add Bank Account
             </span>
             <span className="text-sm md:text-lg 2xl:text-xl text-white mt-2 px-12">
-              In order to proceed with payouts. Please add your Bank
-              account.
+              In order to proceed with payouts. Please add your Bank account.
             </span>
           </div>
           <form
