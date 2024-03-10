@@ -701,7 +701,7 @@ const Transaction = () => {
                   .slice()
                   .reverse()
                   .map((customer) => (
-                    <div className="flex w-[600px] py-3 border-1 border-solid border-aliceblue bg-lightBlue rounded-lg ">
+                    <div className="flex w-[600px] py-4 border-1 border-solid border-aliceblue bg-lightBlue rounded-lg ">
                       {/* <div className="flex w-[75px] h-[75px] ml-[20px] flex-row items-start rounded-full overflow-hidden ">
                         <img
                           className="w-[75px] h-[75px]"
@@ -709,7 +709,7 @@ const Transaction = () => {
                           alt="user"
                         />
                       </div> */}
-                      <div className="flex flex-col justify-center items-center px-6 text-left">
+                      <div className="flex flex-col justify-center items-center px-6 text-left gap-1">
                         <span className="2xl:text-lg text-base font-semibold mr-auto">
                           {customer.name || ""}
                         </span>
@@ -785,19 +785,31 @@ const Transaction = () => {
             ) : (
               <div>
                 <div className="flex w-[600px] py-8 flex-col border-solid border-1 bg-lightBlue border-aliceblue rounded-lg m-5 relative">
-                  <div className="flex flex-row w-full">
-                    {/* <div className="flex w-[75px] h-[75px] ml-[20px] items-start rounded-full overflow-hidden">
-                      <img
-                        className="w-[75px] h-[75px] "
-                        src={`${process.env.REACT_APP_API_URL_IMAGE}/${custDetails.profileImage}`}
-                        alt="user"
-                      />
-                    </div> */}
+                  {/* <div className="flex flex-row w-full">
+                   
                     <div className="flex flex-col m-4 pl-3">
                       <span className="2xl:text-lg text-base text-left font-semibold mr-auto">
                         {custDetails.name ? custDetails.name : ""}
                       </span>
                       <span className="2xl:text-base text-sm font-normal">
+                        {custDetails.phone}
+                      </span>
+                    </div>
+                  </div> */}
+                  <div className="flex flex-row justify-around 2xl:text-lg text-base">
+                    <div className="flex flex-col max-w-[60%] w-full justify-start items-center mr-auto ml-5 pr-4">
+                      <span className=" text-left font-semibold mr-auto m-1 ">
+                        Name
+                      </span>
+                      <span className=" font-normal mr-auto m-1">
+                        {custDetails.name ? custDetails.name : ""}
+                      </span>
+                    </div>
+                    <div className="flex flex-col items-center max-w-[40%] w-full justify-start pr-8">
+                      <span className=" text-left font-semibold mr-auto m-1">
+                        Phone Number
+                      </span>
+                      <span className="font-normal mr-auto m-1">
                         {custDetails.phone}
                       </span>
                     </div>
