@@ -12,6 +12,7 @@ import Viewer from "react-viewer";
 import { Document, Page } from "react-pdf";
 import Footer from "../../components/Footer";
 import CustomButton from "../../components/CustomButton";
+import GenerateInvoice from "../../components/generateInvoice";
 import "react-toastify/dist/ReactToastify.css";
 
 const Transaction = () => {
@@ -29,6 +30,7 @@ const Transaction = () => {
     name: "",
   });
   const [custIdDrawer, setCustIdDrawer] = React.useState(false);
+  const [showInvoice, setShowInvoice] = React.useState(false);
   const [cost, setCost] = React.useState("");
   const [id, setId] = React.useState("");
   const [selectedFile, setSelectedFile] = React.useState("");
@@ -87,6 +89,7 @@ const Transaction = () => {
     setCustIdDrawer(false);
     setParticularTransaction(null);
   };
+
   const onClose = () => {
     setSelectCustomer(false);
     setShowSubmit(false);
@@ -100,10 +103,16 @@ const Transaction = () => {
   const onCloseTreatments = () => {
     setShowTreatments(false);
     setShowCustomerdDtails(true);
+    setShowInvoice(false);
   };
   const onClosePlans = () => {
     setShowPlans(false);
     setShowTreatments(true);
+  };
+
+  const handleInvoiceClick = () => {
+    setShowTreatments(false);
+    setShowInvoice(true);
   };
   const handleSubmit = async () => {
     setSubmitting(true);
@@ -290,7 +299,7 @@ const Transaction = () => {
 
   return (
     <>
-      <div className="flex w-full relative font-poppins">
+      <div className="relative flex w-full font-poppins">
         <div className="fixed top-0 bottom-0">
           <Sidebar />
         </div>
@@ -300,22 +309,22 @@ const Transaction = () => {
             style={{ gridTemplateColumns: "350px auto 180px" }}
           >
             <div className="flex flex-row 2xl:max-w-[450px] max-w-[350px] w-full text-black">
-              <div className="flex flex-col justify-center items-start pr-4">
-                <span className="2xl:text-lg text-base font-normal">
+              <div className="flex flex-col items-start justify-center pr-4">
+                <span className="text-base font-normal 2xl:text-lg">
                   Settled Amount
                 </span>
-                <span className="text-xl 2xl:text-2xl font-bold ">
+                <span className="text-xl font-bold 2xl:text-2xl ">
                   <span>₹</span>
                   <span className={`${loading ? "shimmer bg-lightBlue" : ""}`}>
                     {amounts.settled}
                   </span>
                 </span>
               </div>
-              <div className="flex flex-col justify-center items-start pr-1">
-                <span className="2xl:text-lg text-base font-normal ">
+              <div className="flex flex-col items-start justify-center pr-1">
+                <span className="text-base font-normal 2xl:text-lg ">
                   Unsettled Amount
                 </span>
-                <span className="2xl:text-2xl text-xl font-bold ">
+                <span className="text-xl font-bold 2xl:text-2xl ">
                   <span>₹</span>
                   <span className={`${loading ? "shimmer bg-lightBlue" : ""}`}>
                     {amounts.unsettled}
@@ -433,7 +442,7 @@ const Transaction = () => {
                     </td>
                     <td className="max-w-[150px] w-full">Transaction ID</td>
                     <td className="pr-4 2xl:max-w-[160px] max-w-[200px] w-full relative flex items-center">
-                      <span className=" justify-start absolute left-14 2xl:left-10 align-middle">
+                      <span className="absolute justify-start align-middle left-14 2xl:left-10">
                         Name
                       </span>
                     </td>
@@ -446,7 +455,7 @@ const Transaction = () => {
                       Treatment
                     </td> */}
                     <td className="max-w-[100px]  w-full relative flex items-center">
-                      <span className="justify-start w-full absolute 2xl:left-4 -left-3">
+                      <span className="absolute justify-start w-full 2xl:left-4 -left-3">
                         Amount
                       </span>
                     </td>
@@ -456,7 +465,7 @@ const Transaction = () => {
                     </td>
                   </tr>
                 </thead>
-                <tbody className="border-solid text-xl border-2 border-aliceblue bg-white rounded-lg">
+                <tbody className="text-xl bg-white border-2 border-solid rounded-lg border-aliceblue">
                   <tr
                     className={`text-xl border-solid border-1 border-aliceblue bg-lightBlue rounded-lg h-[65px] -mt-1 shimmer`}
                   >
@@ -502,7 +511,7 @@ const Transaction = () => {
                     </td>
                     <td className="max-w-[150px] w-full">Transaction ID</td>
                     <td className="pr-4 2xl:max-w-[160px] max-w-[200px] w-full relative flex items-center">
-                      <span className=" justify-start absolute left-14 2xl:left-10 align-middle">
+                      <span className="absolute justify-start align-middle left-14 2xl:left-10">
                         Name
                       </span>
                     </td>
@@ -515,7 +524,7 @@ const Transaction = () => {
                       Treatment
                     </td> */}
                     <td className="max-w-[100px]  w-full relative flex items-center">
-                      <span className="justify-start w-full absolute 2xl:left-4 -left-3">
+                      <span className="absolute justify-start w-full 2xl:left-4 -left-3">
                         Amount
                       </span>
                     </td>
@@ -525,7 +534,7 @@ const Transaction = () => {
                     </td>
                   </tr>
                 </thead>
-                <tbody className="border-solid 2xl:text-lg text-base border-1 border-aliceblue bg-white rounded-lg">
+                <tbody className="text-base bg-white border-solid rounded-lg 2xl:text-lg border-1 border-aliceblue">
                   {transactions.length > 0 ? (
                     transactions
                       .slice()
@@ -655,11 +664,11 @@ const Transaction = () => {
             open={selectCustomer}
             key="right"
             width={700}
-            className="border-solid border-2 border-aliceblue border-t-0 border-b-0 border-r-0 font-Poppins"
+            className="border-2 border-t-0 border-b-0 border-r-0 border-solid border-aliceblue font-Poppins"
           >
             <div className="flex mt-[10px] flex-row justify-start items-start ml-5">
               <svg
-                className="h-8 w-8 text-black cursor-pointer"
+                className="w-8 h-8 text-black cursor-pointer"
                 width="24"
                 height="24"
                 viewBox="0 0 24 24"
@@ -676,8 +685,8 @@ const Transaction = () => {
                 <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
             </div>
-            <div className="flex flex-row ml-5 mt-3">
-              <span className="text-2xl 2xl:text-3xl font-extrabold mt-4">
+            <div className="flex flex-row mt-3 ml-5">
+              <span className="mt-4 text-2xl font-extrabold 2xl:text-3xl">
                 Select Customer
               </span>
             </div>
@@ -685,7 +694,7 @@ const Transaction = () => {
               <div className="flex ml-1">
                 <BsSearch size={24} color="#306FC7" />
               </div>
-              <div className="flex justify-start items-center">
+              <div className="flex items-center justify-start">
                 <input
                   type="search"
                   className="block text-lg w-[550px] px-2 py-[0.20rem] leading-[1.6] border-none outline-none placeholder:text-aliceblue "
@@ -695,7 +704,7 @@ const Transaction = () => {
                 />
               </div>
             </div>
-            <div className="grid grid-cols-1 align-middle p-5 gap-5 mt-5">
+            <div className="grid grid-cols-1 gap-5 p-5 mt-5 align-middle">
               {approvedCust ? (
                 approvedCust
                   .slice()
@@ -709,11 +718,11 @@ const Transaction = () => {
                           alt="user"
                         />
                       </div> */}
-                      <div className="flex flex-col justify-center items-center px-6 text-left">
-                        <span className="2xl:text-lg text-base font-semibold mr-auto">
+                      <div className="flex flex-col items-center justify-center px-6 text-left">
+                        <span className="mr-auto text-base font-semibold 2xl:text-lg">
                           {customer.name || ""}
                         </span>
-                        <span className="2xl:text-base text-sm mr-auto">
+                        <span className="mr-auto text-sm 2xl:text-base">
                           {customer.phone}
                         </span>
                       </div>
@@ -737,8 +746,8 @@ const Transaction = () => {
                   ))
               ) : (
                 <>
-                  <div className="fixed inset-0 bg-gray-500 opacity-100 z-50"></div>
-                  <div className=" flex justify-center items-center w-full my-auto transition ease-in delay-300 ">
+                  <div className="fixed inset-0 z-50 bg-gray-500 opacity-100"></div>
+                  <div className="flex items-center justify-center w-full my-auto transition ease-in delay-300 ">
                     <Spin size="large" />
                   </div>
                 </>
@@ -752,11 +761,11 @@ const Transaction = () => {
             open={showCustomerdDtails}
             key="rightCustomerDetails"
             width={700}
-            className="border-solid border-2 border-aliceblue border-t-0 border-b-0 border-r-0 "
+            className="border-2 border-t-0 border-b-0 border-r-0 border-solid border-aliceblue "
           >
             <div className="flex mt-[10px] flex-row justify-start items-start ml-5">
               <svg
-                className="h-8 w-8 text-black cursor-pointer"
+                className="w-8 h-8 text-black cursor-pointer"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -770,15 +779,15 @@ const Transaction = () => {
                 />
               </svg>
             </div>
-            <div className="flex flex-row ml-5 mt-3">
-              <span className="text-2xl 2xl:text-3xl font-extrabold mt-4">
+            <div className="flex flex-row mt-3 ml-5">
+              <span className="mt-4 text-2xl font-extrabold 2xl:text-3xl">
                 Customer Details
               </span>
             </div>
             {custDetails === null ? (
               <>
-                <div className="fixed inset-0 bg-gray-500 opacity-100 z-50"></div>
-                <div className=" flex justify-center items-center w-full h-full transition ease-in delay-300 ">
+                <div className="fixed inset-0 z-50 bg-gray-500 opacity-100"></div>
+                <div className="flex items-center justify-center w-full h-full transition ease-in delay-300 ">
                   <Spin size="large" />
                 </div>
               </>
@@ -793,66 +802,66 @@ const Transaction = () => {
                         alt="user"
                       />
                     </div> */}
-                    <div className="flex flex-col m-4 pl-3">
-                      <span className="2xl:text-lg text-base text-left font-semibold mr-auto">
+                    <div className="flex flex-col pl-3 m-4">
+                      <span className="mr-auto text-base font-semibold text-left 2xl:text-lg">
                         {custDetails.name ? custDetails.name : ""}
                       </span>
-                      <span className="2xl:text-base text-sm font-normal">
+                      <span className="text-sm font-normal 2xl:text-base">
                         {custDetails.phone}
                       </span>
                     </div>
                   </div>
-                  <div className="flex flex-col w-full mt-8 2xl:text-lg text-base">
+                  <div className="flex flex-col w-full mt-8 text-base 2xl:text-lg">
                     <div className="flex flex-row justify-around">
                       <div className="flex flex-col max-w-[60%] w-full justify-start items-center mr-auto ml-5 pr-4">
-                        <span className=" text-left font-semibold mr-auto m-1 ">
+                        <span className="m-1 mr-auto font-semibold text-left ">
                           Addressline 1
                         </span>
-                        <span className=" font-normal mr-auto m-1">
+                        <span className="m-1 mr-auto font-normal ">
                           {custDetails.customerLocation.line1}
                         </span>
                       </div>
                       <div className="flex flex-col items-center max-w-[40%] w-full justify-start pr-8">
-                        <span className=" text-left font-semibold mr-auto m-1">
+                        <span className="m-1 mr-auto font-semibold text-left ">
                           Addressline 2
                         </span>
-                        <span className="font-normal mr-auto m-1">
+                        <span className="m-1 mr-auto font-normal">
                           {custDetails.customerLocation.line2}
                         </span>
                       </div>
                     </div>
-                    <div className="flex flex-row w-full justify-around mt-10">
+                    <div className="flex flex-row justify-around w-full mt-10">
                       <div className="flex flex-col max-w-[60%] w-full justify-start items-center mr-auto ml-5 pr-4">
-                        <span className=" text-left font-semibold mr-auto m-1">
+                        <span className="m-1 mr-auto font-semibold text-left ">
                           State
                         </span>
-                        <span className="text-lg font-normal mr-auto m-1">
+                        <span className="m-1 mr-auto text-lg font-normal">
                           {custDetails.customerLocation.state}
                         </span>
                       </div>
                       <div className="flex flex-col items-center max-w-[40%] w-full justify-start pr-8">
-                        <span className="text-left font-semibold mr-auto m-1">
+                        <span className="m-1 mr-auto font-semibold text-left">
                           Pincode
                         </span>
-                        <span className="text-left font-normal mr-auto m-1">
+                        <span className="m-1 mr-auto font-normal text-left">
                           {custDetails.customerLocation.pincode}
                         </span>
                       </div>
                     </div>
-                    {/* <div className="flex flex-row w-full justify-around mt-10">
+                    {/* <div className="flex flex-row justify-around w-full mt-10">
                       <div className="flex flex-col max-w-[60%] w-full justify-start items-center mr-auto ml-5 pr-4">
-                        <span className=" text-left font-semibold mr-auto m-1">
+                        <span className="m-1 mr-auto font-semibold text-left ">
                           Marital Status
                         </span>
-                        <span className=" font-normal mr-auto m-1">
+                        <span className="m-1 mr-auto font-normal ">
                           {custDetails.maritialStatus}
                         </span>
                       </div>
                       <div className="flex flex-col items-center max-w-[40%] w-full justify-start pr-8">
-                        <span className=" text-left font-semibold mr-auto m-1">
+                        <span className="m-1 mr-auto font-semibold text-left ">
                           Aadhar No
                         </span>
-                        <span className="text-left font-normal mr-auto m-1">
+                        <span className="m-1 mr-auto font-normal text-left">
                           {custDetails.aadhaar}
                         </span>
                       </div>
@@ -860,21 +869,21 @@ const Transaction = () => {
                   </div>
                 </div>
                 <div className="pb-[100px]">
-                  <div className="flex flex-row ml-5 mt-3">
+                  <div className="flex flex-row mt-3 ml-5">
                     <div className="block">
-                      <span className="text-2xl 2xl:text-3xl text-left font-extrabold mr-auto">
+                      <span className="mr-auto text-2xl font-extrabold text-left 2xl:text-3xl">
                         Credit Limit
                       </span>
                     </div>
-                    <div className="block ml-auto p-5 mr-3 text-left">
+                    <div className="block p-5 ml-auto mr-3 text-left">
                       <span className="text-[10px] 2xl:text-sm font-normal">
                         Available Limit-₹
                         {custDetails.creditLimit - custDetails.creditUsed}
                       </span>
                     </div>
                   </div>
-                  <div className="flex flex-row w-full justify-center items-center">
-                    <div className="block relative">
+                  <div className="flex flex-row items-center justify-center w-full">
+                    <div className="relative block">
                       <Progress
                         percent={
                           (custDetails.creditUsed / custDetails.creditLimit) *
@@ -913,25 +922,25 @@ const Transaction = () => {
                       ₹{custDetails.creditLimit}
                     </div>
                   </div>
-                  <div className="flex flex-row ml-5 mt-5 ">
+                  <div className="flex flex-row mt-5 ml-5 ">
                     <div className="block">
-                      <span className="text-2xl 2xl:text-3xl text-left font-extrabold mr-auto">
+                      <span className="mr-auto text-2xl font-extrabold text-left 2xl:text-3xl">
                         Ongoing Transactions
                       </span>
                     </div>
                   </div>
                   {custDetails.creditUsed ? (
                     <div className="w-[600px] h-[55px] bg-lightBlue border-1 border-solid border-blue rounded-lg flex flex-row items-center ml-6 mt-6">
-                      <span className="2xl:text-lg text-base ml-5">
+                      <span className="ml-5 text-base 2xl:text-lg">
                         Transaction ID -{custDetails?.pendingTransaction?.trnId}
                       </span>
-                      <span className="ml-auto mr-5 text-red 2xl:text-lg text-base">
+                      <span className="ml-auto mr-5 text-base text-red 2xl:text-lg">
                         Pending
                       </span>
                     </div>
                   ) : (
                     <div className="flex flex-row w-full mt-8 mb-[120px] justify-center items-center">
-                      <div className="block 2xl:text-xl text-lg">
+                      <div className="block text-lg 2xl:text-xl">
                         No Ongoing Transactions
                       </div>
                     </div>
@@ -939,7 +948,7 @@ const Transaction = () => {
                 </div>
                 {!eligible ? (
                   <div className="w-[600px] h-[55px] bg-lightYellow border-1 border-solid border-yellow rounded-lg flex flex-row items-center ml-6 mt-[45px] mb-[100px] relative">
-                    <span className="text-xl text-yellow ml-5">
+                    <span className="ml-5 text-xl text-yellow">
                       Not eligible because of the ongoing pending transactions.
                     </span>
                   </div>
@@ -948,8 +957,8 @@ const Transaction = () => {
             )}
             {/* <hr className="mr-auto bg-blue left-0 bottom-[80px] w-full"/> */}
             <div className="w-[99.7%] block absolute bottom-0 right-0 bg-white ml-0">
-              <Divider className="bg-blue mr-auto mt-0" />
-              <div className="flex w-full justify-end mr-8 pb-4">
+              <Divider className="mt-0 mr-auto bg-blue" />
+              <div className="flex justify-end w-full pb-4 mr-8">
                 <CustomButton
                   firstButton="CANCEL"
                   secondButton="NEXT"
@@ -984,11 +993,11 @@ const Transaction = () => {
             open={showTreatments}
             key="rightTreatments"
             width={700}
-            className="border-solid border-2 border-aliceblue border-t-0 border-b-0 border-r-0 "
+            className="border-2 border-t-0 border-b-0 border-r-0 border-solid border-aliceblue "
           >
             <div className="flex mt-[10px] flex-row justify-start items-start ml-5">
               <svg
-                className="h-8 w-8 text-black cursor-pointer"
+                className="w-8 h-8 text-black cursor-pointer"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -1002,8 +1011,8 @@ const Transaction = () => {
                 />
               </svg>
             </div>
-            {/* <div className="block ml-5 mt-8">
-              <span className="text-2xl 2xl:text-3xl font-extrabold mt-4">
+            {/* <div className="block mt-8 ml-5">
+              <span className="mt-4 text-2xl font-extrabold 2xl:text-3xl">
                 Select Invoice
               </span>
             </div> */}
@@ -1012,7 +1021,7 @@ const Transaction = () => {
                 <select
                   id="treatment"
                   name="name"
-                  className=" block w-full font-normal px-4 2xl:text-xl text-lg border-aliceblue border-1 bg-lightBlue rounded-lg text-left text-blue outline-none"
+                  className="block w-full px-4 text-lg font-normal text-left rounded-lg outline-none 2xl:text-xl border-aliceblue border-1 bg-lightBlue text-blue"
                   // onClick={selectTreatments}
                   defaultValue=""
                   value={selectedTreatment.code}
@@ -1029,9 +1038,17 @@ const Transaction = () => {
                 </select>
               </div> */}
               <div className="block mt-5 ml-5">
-                <span className="2xl:text-2xl text-xl font-extrabold">
-                  Upload Invoice
-                </span>
+                <div className="flex items-center justify-between">
+                  <span className="text-xl font-extrabold 2xl:text-2xl">
+                    Upload Invoice
+                  </span>
+                  <button
+                    className="px-4 py-2 text-white cursor-pointer bg-aliceblue"
+                    onClick={handleInvoiceClick}
+                  >
+                    Generate invoice
+                  </button>
+                </div>
               </div>
               <div className="flex flex-row justify-center items-center border-solid border-1 rounded-lg mr-auto ml-auto bg-lightBlue border-aliceblue mt-7 w-[600px] h-[200px]">
                 {previewUrl ? (
@@ -1045,7 +1062,7 @@ const Transaction = () => {
                 ) : (
                   <label
                     htmlFor="invoice"
-                    className="text-lg 2xl:text-xl font-normal text-blue cursor-pointer"
+                    className="text-lg font-normal cursor-pointer 2xl:text-xl text-blue"
                   >
                     Choose File
                   </label>
@@ -1067,12 +1084,12 @@ const Transaction = () => {
                 />
               </div>
               <div className="block mt-12 ml-5">
-                <span className="2xl:text-2xl text-xl font-extrabold">
+                <span className="text-xl font-extrabold 2xl:text-2xl">
                   Invoice Cost
                 </span>
               </div>
               <div className="block mt-5 ml-7">
-                <span className="text-blue text-xl">₹</span>
+                <span className="text-xl text-blue">₹</span>
                 <input
                   type="number"
                   className="w-[575px] h-[50px] mx-3 2xl:text-xl text-lg text-blue border-1 border-solid border-blue placeholder-blue bg-lightBlue border-x-0 border-t-0 outline-none"
@@ -1092,9 +1109,9 @@ const Transaction = () => {
               </div>
 
               {/* <hr className="mr-auto bg-blue left-0 bottom-[80px] w-full"/> */}
-              <div className="w-full block absolute bottom-3 right-0">
-                <Divider className="bg-blue mr-auto" />
-                <div className="flex w-full justify-end mr-8 pb-4">
+              <div className="absolute right-0 block w-full bottom-3">
+                <Divider className="mr-auto bg-blue" />
+                <div className="flex justify-end w-full pb-4 mr-8">
                   <CustomButton
                     firstButton="CANCEL"
                     secondButton="NEXT"
@@ -1121,8 +1138,15 @@ const Transaction = () => {
               </div>
             </form>
           </Drawer>
+
+          <GenerateInvoice
+            showInvoice={showInvoice}
+            setShowInvoice={setShowInvoice}
+            setShowTreatments={setShowTreatments}
+          />
+
           {submitting && (
-            <div className="fixed inset-0 bg-gray-500 opacity-100 z-50"></div>
+            <div className="fixed inset-0 z-50 bg-gray-500 opacity-100"></div>
           )}
           <Drawer
             placement="right"
@@ -1131,12 +1155,12 @@ const Transaction = () => {
             open={showPlans}
             key="rightPlans"
             width={700}
-            className="border-solid border-2 border-aliceblue border-t-0 border-b-0 border-r-0"
+            className="border-2 border-t-0 border-b-0 border-r-0 border-solid border-aliceblue"
           >
-            <div className="w-full h-screen relative">
+            <div className="relative w-full h-screen">
               <div className="flex mt-[10px] flex-row justify-start items-start ml-5">
                 <svg
-                  className="h-8 w-8 text-black cursor-pointer"
+                  className="w-8 h-8 text-black cursor-pointer"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -1150,8 +1174,8 @@ const Transaction = () => {
                   />
                 </svg>
               </div>
-              <div className="block ml-5 mt-8">
-                <span className="2xl:text-3xl text-2xl font-extrabold mt-4">
+              <div className="block mt-8 ml-5">
+                <span className="mt-4 text-2xl font-extrabold 2xl:text-3xl">
                   Select Plans
                 </span>
               </div>
@@ -1164,11 +1188,11 @@ const Transaction = () => {
                   }`}
                   onClick={() => setSelectedMonth("fifteen")}
                 >
-                  <span className="2xl:text-2xl text-xl text-blue">
+                  <span className="text-xl 2xl:text-2xl text-blue">
                     15 Days
                   </span>
-                  <span className="2xl:text-base text-sm ">1% interest</span>
-                  {/* <span className="2xl:text-base text-sm">per month</span> */}
+                  <span className="text-sm 2xl:text-base ">1% interest</span>
+                  {/* <span className="text-sm 2xl:text-base">per month</span> */}
                 </div>
                 <div
                   className={`flex flex-col w-[260px] h-[170px]  bg-lightBlue rounded-lg justify-center items-center cursor-pointer ${
@@ -1178,10 +1202,10 @@ const Transaction = () => {
                   }`}
                   onClick={() => setSelectedMonth("thirty")}
                 >
-                  <span className="2xl:text-2xl text-xl text-blue">
+                  <span className="text-xl 2xl:text-2xl text-blue">
                     30 Days
                   </span>
-                  <span className="2xl:text-base text-sm">2% interest</span>
+                  <span className="text-sm 2xl:text-base">2% interest</span>
                 </div>
                 <div
                   className={`flex flex-col w-[260px] h-[170px] bg-lightBlue rounded-lg justify-center items-center cursor-pointer ${
@@ -1191,10 +1215,10 @@ const Transaction = () => {
                   }`}
                   onClick={() => setSelectedMonth("fourtyFive")}
                 >
-                  <span className="2xl:text-2xl text-xl text-blue">
+                  <span className="text-xl 2xl:text-2xl text-blue">
                     45 Days
                   </span>
-                  <span className="2xl:text-base text-sm">3% interest</span>
+                  <span className="text-sm 2xl:text-base">3% interest</span>
                 </div>
                 <div
                   className={`flex flex-col w-[260px] h-[170px] bg-lightBlue rounded-lg justify-center items-center cursor-pointer ${
@@ -1204,10 +1228,10 @@ const Transaction = () => {
                   }`}
                   onClick={() => setSelectedMonth("sixty")}
                 >
-                  <span className="2xl:text-2xl text-xl text-blue">
+                  <span className="text-xl 2xl:text-2xl text-blue">
                     60 Days
                   </span>
-                  <span className="2xl:text-base text-sm">4% interest</span>
+                  <span className="text-sm 2xl:text-base">4% interest</span>
                 </div>
                 <div
                   className={`flex flex-col w-[260px] h-[170px] bg-lightBlue rounded-lg justify-center items-center cursor-pointer ${
@@ -1217,10 +1241,10 @@ const Transaction = () => {
                   }`}
                   onClick={() => setSelectedMonth("seventyFive")}
                 >
-                  <span className="2xl:text-2xl text-xl text-blue">
+                  <span className="text-xl 2xl:text-2xl text-blue">
                     75 Days
                   </span>
-                  <span className="2xl:text-base text-sm">5% interest</span>
+                  <span className="text-sm 2xl:text-base">5% interest</span>
                 </div>
                 <div
                   className={`flex flex-col w-[260px] h-[170px] bg-lightBlue rounded-lg justify-center items-center cursor-pointer ${
@@ -1230,49 +1254,49 @@ const Transaction = () => {
                   }`}
                   onClick={() => setSelectedMonth("ninety")}
                 >
-                  <span className="2xl:text-2xl text-xl text-blue">
+                  <span className="text-xl 2xl:text-2xl text-blue">
                     90 Days
                   </span>
-                  <span className="2xl:text-base text-sm">6% interest</span>
+                  <span className="text-sm 2xl:text-base">6% interest</span>
                 </div>
               </div>
 
               <div className="block ml-5">
-                <span className="text-2xl 2xl:text-3xl font-extrabold mt-4">
+                <span className="mt-4 text-2xl font-extrabold 2xl:text-3xl">
                   Amount Payable
                 </span>
               </div>
               <div className="flex w-[580px] py-4 justify-around items-center font-Poppins border-1 border-solid border-aliceblue bg-lightBlue rounded-lg mt-5 ml-5 ">
-                <div className="flex flex-col mr-auto ml-10 2xl:text-xl text-lg text-blue">
+                <div className="flex flex-col ml-10 mr-auto text-lg 2xl:text-xl text-blue">
                   <span className="mb-3">Invoice Cost</span>
                   {/* <span className="mb-3">Total Interest</span>
                     <span className="mb-3">Convenience Fee</span> */}
                   {/* <span className="mb-2">EMI</span> */}
-                  <span className="text-black mb-2">Total Payable</span>
+                  <span className="mb-2 text-black">Total Payable</span>
                 </div>
-                <div className="flex flex-col ml-auto mr-10 2xl:text-xl text-lg text-blue">
-                  <span className=" mb-3">
+                <div className="flex flex-col ml-auto mr-10 text-lg 2xl:text-xl text-blue">
+                  <span className="mb-3 ">
                     ₹{selectedMonth ? selectPlan.invoiceCost : "0"}
                   </span>
-                  {/* <span className=" mb-3">
+                  {/* <span className="mb-3 ">
                       
                       {selectedMonth
                         ? selectPlan[selectedMonth].totalInterest
                         : "0"}%
                     </span>
-                    <span className=" mb-3">
+                    <span className="mb-3 ">
                       ₹
                       {selectedMonth
                         ? selectPlan[selectedMonth].convinienceFee
                         : "0"}
                     </span> */}
-                  {/* <span className=" mb-3">
+                  {/* <span className="mb-3 ">
                       ₹
                       {selectedMonth
                         ? Math.round(selectPlan[selectedMonth].emi)
                         : "0"}
                     </span> */}
-                  <span className="text-black  mb-2">
+                  <span className="mb-2 text-black">
                     ₹
                     {selectedMonth
                       ? selectPlan[selectedMonth].totalPayable
@@ -1280,38 +1304,38 @@ const Transaction = () => {
                   </span>
                 </div>
               </div>
-              <div className="block ml-5 mt-4">
-                <span className="text-2xl 2xl:text-3xl font-extrabold mt-4">
+              <div className="block mt-4 ml-5">
+                <span className="mt-4 text-2xl font-extrabold 2xl:text-3xl">
                   Amount Receivable
                 </span>
               </div>
               <div className="pb-[150px]">
                 <div className="flex w-[580px] py-4  justify-around items-center font-Poppins border-1 border-solid border-aliceblue bg-lightBlue rounded-lg mt-5 ml-5 ">
-                  <div className="flex flex-col mr-auto ml-10 2xl:text-xl text-lg text-blue">
+                  <div className="flex flex-col ml-10 mr-auto text-lg 2xl:text-xl text-blue">
                     <span className="mb-3">Invoice Amount</span>
                     <span className="mb-3">Total Interest</span>
                     <span className="mb-3">Convenience Fee</span>
                     <span className="mb-3 text-black">Total Receivable</span>
                   </div>
-                  <div className="flex flex-col ml-auto mr-10 2xl:text-xl text-lg text-blue">
-                    <span className=" mb-3">
+                  <div className="flex flex-col ml-auto mr-10 text-lg 2xl:text-xl text-blue">
+                    <span className="mb-3 ">
                       ₹{selectedMonth ? selectPlan.invoiceCost : "0"}
                     </span>
-                    <span className=" mb-3">
+                    <span className="mb-3 ">
                       -
                       {selectedMonth
                         ? selectPlan[selectedMonth].totalInterest
                         : "0"}
                       %
                     </span>
-                    <span className=" mb-3">
+                    <span className="mb-3 ">
                       -
                       {selectedMonth
                         ? selectPlan[selectedMonth].convinienceFee
                         : "0"}
                       %
                     </span>
-                    <span className="text-black  mb-2">
+                    <span className="mb-2 text-black">
                       ₹
                       {selectedMonth
                         ? selectPlan[selectedMonth].totalReceivable
@@ -1323,8 +1347,8 @@ const Transaction = () => {
             </div>
             {/* <hr className="mr-auto bg-blue left-0 bottom-[80px] w-full"/> */}
             <div className="w-[99.7%] block absolute bottom-0 right-0 bg-white ml-0">
-              <Divider className="bg-blue mr-auto mt-0" />
-              <div className="flex w-full justify-end mr-8 pb-4">
+              <Divider className="mt-0 mr-auto bg-blue" />
+              <div className="flex justify-end w-full pb-4 mr-8">
                 <CustomButton
                   firstButton="CANCEL"
                   secondButton="DONE"
@@ -1349,7 +1373,6 @@ const Transaction = () => {
               </div> */}
             </div>
           </Drawer>
-
           <Drawer
             placement="right"
             closable={false}
@@ -1357,12 +1380,12 @@ const Transaction = () => {
             open={showSubmit}
             key="rightSubmit"
             width={700}
-            className="border-solid border-2 border-aliceblue border-t-0 border-b-0 border-r-0"
+            className="border-2 border-t-0 border-b-0 border-r-0 border-solid border-aliceblue"
           >
-            <div className="w-full relative">
+            <div className="relative w-full">
               <div className="flex mt-[10px] flex-row justify-start items-start ml-5">
                 <svg
-                  className="h-8 w-8 text-black cursor-pointer"
+                  className="w-8 h-8 text-black cursor-pointer"
                   width="24"
                   height="24"
                   viewBox="0 0 24 24"
@@ -1380,7 +1403,7 @@ const Transaction = () => {
                 </svg>
               </div>
               <div className="flex w-full justify-center pt-[80px] space-y-5 font-Poppins">
-                <div className="flex flex-col justify-center items-center">
+                <div className="flex flex-col items-center justify-center">
                   <div className="w-[250px]">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -1392,7 +1415,7 @@ const Transaction = () => {
                       />
                     </svg>
                   </div>
-                  <span className="font-bold text-2xl 2xl:text-3xl">
+                  <span className="text-2xl font-bold 2xl:text-3xl">
                     Congratulations
                   </span>
                   <span className="w-[350px] break-words text-xl 2xl:text-2xl text-center">

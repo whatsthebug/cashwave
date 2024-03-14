@@ -2,7 +2,7 @@ import { Drawer } from "antd";
 import React from "react";
 import { FormContext } from "../../Contexts/FormContext";
 
-const ThankYou = () => {
+const ThankYou = ({ isCustomer }) => {
   const [submit, setSubmit] = React.useState(false);
 
   const { handleFormSubmit } = React.useContext(FormContext);
@@ -20,12 +20,12 @@ const ThankYou = () => {
         open={!submit}
         key="rightSubmit"
         width={window.innerWidth < 768 ? window.innerWidth : 700}
-        className="border-solid border-2 border-aliceblue border-t-0 border-b-0 border-r-0"
+        className="border-2 border-t-0 border-b-0 border-r-0 border-solid border-aliceblue"
       >
-        <div className="w-full  relative">
+        <div className="relative w-full">
           <div className="flex mt-[10px] flex-row justify-start items-start md:ml-5">
             <svg
-              className="h-8 w-8 text-black cursor-pointer"
+              className="w-8 h-8 text-black cursor-pointer"
               width="24"
               height="24"
               viewBox="0 0 24 24"
@@ -42,8 +42,8 @@ const ThankYou = () => {
               <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           </div>
-          <div className="flex w-full justify-center items-center  font-Poppins">
-            <div className="flex flex-col flex-wrap justify-center items-center space-y-5 fixed top-1/4">
+          <div className="flex items-center justify-center w-full font-Poppins">
+            <div className="fixed flex flex-col flex-wrap items-center justify-center space-y-5 top-1/4">
               <div className="w-[200px] ">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                   <path
@@ -53,7 +53,9 @@ const ThankYou = () => {
                 </svg>
               </div>
               <span className="font-bold w-[80vw] md:w-[400px] text-center text-2xl 2xl:text-3xl">
-                Customer Registered Successfully
+                {isCustomer
+                  ? "Customer Registered Successfully"
+                  : "Product Added Successfully"}
               </span>
             </div>
           </div>

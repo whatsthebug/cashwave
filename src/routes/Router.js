@@ -26,6 +26,8 @@ import CompanyPan from "../pages/CompanyPan/CompanyPan";
 import RegistrationProof from "../pages/registrationProof/RegistrationProof";
 import MerchantAadhaar from "../pages/merchantAadhar/MerchantAadhaar";
 import MerchantAadhaarOtp from "../pages/MerchantAadhaarOtp/MerchantAadhaarOtp";
+import Products from "../pages/products/Products";
+
 const PrivateRoute = () => {
   const isAuthenticated = localStorage.getItem("token") ? true : false;
   return isAuthenticated ? <Outlet /> : <Navigate to="/login" />;
@@ -112,6 +114,9 @@ const Router = () => {
             </Route>
             <Route exact path="/customers" element={<PrivateRoute />}>
               <Route exact path="/customers" element={<Customers />} />
+            </Route>
+            <Route exact path="/products" element={<PrivateRoute />}>
+              <Route exact path="/products" element={<Products />} />
             </Route>
             <Route exact path="/transactions" element={<PrivateRoute />}>
               <Route exact path="/transactions" element={<Transaction />} />

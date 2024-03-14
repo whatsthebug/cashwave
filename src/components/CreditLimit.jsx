@@ -52,7 +52,7 @@ const CreditLimit = ({ onClose }) => {
     <>
       {submitting && (
         <div
-          className="bg-blue h-1 absolute top-0 left-0 right-0"
+          className="absolute top-0 left-0 right-0 h-1 bg-blue"
           style={{ width: "100%", animation: "loading-bar 2s infinite" }}
         ></div>
       )}
@@ -66,7 +66,7 @@ const CreditLimit = ({ onClose }) => {
       >
         <div className="flex mt-[10px] flex-row justify-start items-start md:ml-5">
           <svg
-            className="h-8 w-8 text-black cursor-pointer"
+            className="w-8 h-8 text-black cursor-pointer"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -80,14 +80,14 @@ const CreditLimit = ({ onClose }) => {
             />
           </svg>
         </div>
-        <div className="block md:px-5 pt-10">
-          <span className="text-2xl 2xl:text-3xl font-bold">
+        <div className="block pt-10 md:px-5">
+          <span className="text-2xl font-bold 2xl:text-3xl">
             Set Credit Limit
           </span>
         </div>
         <form onSubmit={handleSubmit}>
           <div className="container relative pb-[120px]">
-            <div className="w-full md:ml-5 mt-6">
+            <div className="w-full mt-6 md:ml-5">
               <div className="grid grid-cols-2 gap-5 overflow-hidden">
                 <div
                   className={`flex justify-center items-center h-[15vh] md:h-[180px] w-[40vw] md:w-[250px] bg-lightBlue rounded-lg cursor-pointer ${
@@ -142,12 +142,12 @@ const CreditLimit = ({ onClose }) => {
                 or
               </div>
               <div className="flex w-full flex-row items-end  max-w-[565px] mt-6">
-                <span className="text-xl 2xl:text-2xl text-blue p-1">
+                <span className="p-1 text-xl 2xl:text-2xl text-blue">
                   &#8377;
                 </span>
                 <input
                   type="number"
-                  className="block w-full mt-1 font-normal text-lg p-2 2xl:text-xl text-blue border-blue border-1 border-t-0 border-x-0 text-left bg-lightBlue placeholder-blue outline-transparent"
+                  className="block w-full p-2 mt-1 text-lg font-normal text-left border-t-0 2xl:text-xl text-blue border-blue border-1 border-x-0 bg-lightBlue placeholder-blue outline-transparent"
                   placeholder="Credit Limit"
                   value={selectedCredit}
                   onChange={(e) => setSelectedcredit(e.target.value)}
@@ -156,9 +156,9 @@ const CreditLimit = ({ onClose }) => {
             </div>
           </div>
 
-          <div className="w-full block bg-white  absolute bottom-0 right-0 overflow-hidden">
-            <Divider className="bg-blue mr-auto mt-0" />
-            <div className="flex w-full justify-end mr-8 pb-4">
+          <div className="absolute bottom-0 right-0 block w-full overflow-hidden bg-white">
+            <Divider className="mt-0 mr-auto bg-blue" />
+            <div className="flex justify-end w-full pb-4 mr-8">
               <CustomButton
                 firstButton="CANCEL"
                 secondButton="NEXT"
@@ -170,9 +170,9 @@ const CreditLimit = ({ onClose }) => {
           </div>
         </form>
       </Drawer>
-      {onOpenPanDrawer && <ThankYou />}
+      {onOpenPanDrawer && <ThankYou isCustomer={true} />}
       {submitting && (
-        <div className="fixed inset-0 bg-gray-500 opacity-75 z-50"></div>
+        <div className="fixed inset-0 z-50 bg-gray-500 opacity-75"></div>
       )}
       <ToastContainer />
     </>
