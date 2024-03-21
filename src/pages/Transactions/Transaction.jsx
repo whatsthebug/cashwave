@@ -1143,6 +1143,7 @@ const Transaction = () => {
             showInvoice={showInvoice}
             setShowInvoice={setShowInvoice}
             setShowTreatments={setShowTreatments}
+            custDetails={custDetails}
           />
 
           {submitting && (

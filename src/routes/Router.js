@@ -27,6 +27,7 @@ import RegistrationProof from "../pages/registrationProof/RegistrationProof";
 import MerchantAadhaar from "../pages/merchantAadhar/MerchantAadhaar";
 import MerchantAadhaarOtp from "../pages/MerchantAadhaarOtp/MerchantAadhaarOtp";
 import Products from "../pages/products/Products";
+import Schemes from "../pages/Schemes/Schemes";
 
 const PrivateRoute = () => {
   const isAuthenticated = localStorage.getItem("token") ? true : false;
@@ -117,6 +118,9 @@ const Router = () => {
             </Route>
             <Route exact path="/products" element={<PrivateRoute />}>
               <Route exact path="/products" element={<Products />} />
+            </Route>
+            <Route exact path="/schemes" element={<PrivateRoute />}>
+              <Route exact path="/schemes" element={<Schemes />} />
             </Route>
             <Route exact path="/transactions" element={<PrivateRoute />}>
               <Route exact path="/transactions" element={<Transaction />} />

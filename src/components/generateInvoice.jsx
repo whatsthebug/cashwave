@@ -13,6 +13,7 @@ export default function GenerateInvoice({
   showInvoice,
   setShowInvoice,
   setShowTreatments,
+  custDetails,
 }) {
   const utcDate = new Date().toUTCString().split(" ");
   const [day, date, month, year] = utcDate;
@@ -27,6 +28,7 @@ export default function GenerateInvoice({
   const [selectedProducts, setSelectedProducts] = useState([]);
   const { baseUrl } = React.useContext(FormContext);
   const [pdfLoading, setPdfLoading] = useState(false);
+  const [inventoryLoading, setInventoryLoading] = useState(false);
   const [selectedFile, setSelectedFile] = React.useState("");
   const [selectedTreatment, setSelectedTreatment] = React.useState({
     code: "",
@@ -37,7 +39,7 @@ export default function GenerateInvoice({
   const [cost, setCost] = React.useState("");
   const [showPlans, setShowPlans] = React.useState(false); //to display plans drawer
   const [selectPlan, setSelectPlan] = React.useState(null);
-  const [custDetails, setCustDetails] = React.useState(null);
+  // const [custDetails, setCustDetails] = React.useState(null);
   const [selectedMonth, setSelectedMonth] = React.useState(null);
   const [showSubmit, setShowSubmit] = React.useState(false);
 
@@ -45,6 +47,7 @@ export default function GenerateInvoice({
   const [merchant, setMerchant] = React.useState({
     username: "",
     address: "",
+    userid: "",
   });
   const [total, setTotal] = useState(0);
   console.log(selectedProducts);
@@ -119,7 +122,8 @@ export default function GenerateInvoice({
     productId,
     productName,
     retailPrice,
-    productCategory
+    productCategory,
+    productCode
   ) => {
     const productIndex = selectedProducts.findIndex(
       (product) => product.productId === productId
@@ -136,6 +140,7 @@ export default function GenerateInvoice({
           productName,
           retailPrice,
           productCategory,
+          productCode,
           quantity: 1, // Initialize quantity to 1
         },
       ]);
@@ -234,6 +239,43 @@ export default function GenerateInvoice({
     }
   };
 
+  const addToInventory = async () => {
+    try {
+      setInventoryLoading(true);
+      const updatedBody = selectedProducts.map((product) => {
+        return {
+          ...product,
+          merchantId: merchant.userid._id,
+          custPhone: custDetails.phone,
+          custName: custDetails.name,
+          custId: custDetails._id,
+        };
+      });
+      const { data } = await axios.post(
+        `${baseUrl}/Hospitals/addInventory`,
+        {
+          updatedBody,
+        },
+        {
+          headers: {
+            "Content-Type": "Application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          withCredentials: "include",
+        }
+      );
+      toast.success("Added to inventory successfully", {
+        position: "top-right",
+      });
+    } catch (error) {
+      toast.error(error.response.data.message, {
+        position: "top-right",
+      });
+    } finally {
+      setInventoryLoading(false);
+    }
+  };
+
   const handleSubmitTreatments = async (event) => {
     event.preventDefault();
     console.log(selectedTreatment);
@@ -308,6 +350,7 @@ export default function GenerateInvoice({
         withCredentials: "include",
       });
       const profile = res.data.data.profile;
+      console.log("profile", profile);
       setMerchant(profile);
     } catch (error) {
       throw Error;
@@ -422,7 +465,8 @@ export default function GenerateInvoice({
                               product.productId,
                               product.productName,
                               product.retailPrice,
-                              product.productCategory
+                              product.productCategory,
+                              product.productCode
                             )
                           }
                           checked={
@@ -432,6 +476,7 @@ export default function GenerateInvoice({
                                 selectedProduct.productId === product.productId
                             )
                           }
+                          className="w-4 h-4 border-gray-300 rounded focus:ring-indigo-500 checked:bg-indigo-600 checked:border-transparent"
                         />
                       </td>
                       <td className="w-16 px-4 py-2 text-base font-medium text-gray-900 capitalize whitespace-nowrap">
@@ -501,7 +546,16 @@ export default function GenerateInvoice({
             </svg>
             <div className="relative inline-block">
               <button
-                className={`px-4 py-3 mb-4 text-white cursor-pointer bg-aliceblue disabled:opacity-40 disabled:cursor-not-allowed ${
+                className={`px-4 py-2 mb-4 mr-4 text-white cursor-pointer bg-aliceblue disabled:opacity-40 disabled:cursor-not-allowed ${
+                  inventoryLoading ? "opacity-50 pointer-events-none" : ""
+                }`}
+                onClick={addToInventory}
+                disabled={inventoryLoading} // Disable the button when PDF is loading
+              >
+                Add to Inventory
+              </button>
+              <button
+                className={`px-4 py-2 mb-4 text-white cursor-pointer bg-aliceblue disabled:opacity-40 disabled:cursor-not-allowed ${
                   pdfLoading ? "opacity-50 pointer-events-none" : ""
                 }`}
                 onClick={generatePdfInvoice}

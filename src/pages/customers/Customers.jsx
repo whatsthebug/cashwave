@@ -11,7 +11,10 @@ import NewCustomer from "../registerUser/NewCustomer";
 
 const Customers = () => {
   const [showCustomerdDtails, setShowCustomerdDtails] = React.useState(false);
+  const [showInventoryDetails, setShowInventoryDetails] = React.useState(false);
+  const [showSchemeDetails, setShowSchemeDetails] = React.useState(false);
   const [custDetails, setCustDetails] = React.useState(null);
+  const [inventoryDetails, setInventoryDetails] = React.useState(null);
   const [customers, setCustomers] = React.useState("");
   const [loading, setLoading] = React.useState(true);
   const [drawers, setDrawers] = React.useState(false);
@@ -25,6 +28,17 @@ const Customers = () => {
   const onClose = () => {
     setShowCustomerdDtails(false);
     setCustDetails(null);
+  };
+
+  const onCloseInventory = () => {
+    setShowInventoryDetails(false);
+    setShowCustomerdDtails(true);
+    setInventoryDetails(null);
+  };
+
+  const onCloseScheme = () => {
+    setShowSchemeDetails(false);
+    setShowInventoryDetails(true);
   };
   const handleClick = async (id) => {
     setShowCustomerdDtails(true);
@@ -63,6 +77,27 @@ const Customers = () => {
       console.error(err);
     }
   };
+
+  const viewInventory = async () => {
+    setShowCustomerdDtails(false);
+    setShowInventoryDetails(true);
+    const id = custDetails.topInfo.id;
+    const { data } = await axios.get(
+      `${baseUrl}/Hospitals/viewInventory/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        withCredentials: "include",
+      }
+    );
+    setInventoryDetails(data);
+  };
+
+  const sendScheme = async () => {
+    setShowInventoryDetails(false);
+    setShowSchemeDetails(true);
+  };
   React.useEffect(() => {
     fetchCustomers();
     if (isFormSubmitted) {
@@ -73,7 +108,7 @@ const Customers = () => {
   }, [isFormSubmitted]);
   return (
     <>
-      <div className="flex w-full relative">
+      <div className="relative flex w-full">
         <div className="fixed top-0 bottom-0">
           <Sidebar />
         </div>
@@ -82,8 +117,8 @@ const Customers = () => {
             className="grid grid-cols-3 px-[40px] 2xl:px-[68px]"
             style={{ gridTemplateColumns: "200px auto 180px" }}
           >
-            <div className="flex text-black mr-auto">
-              <span className="text-2xl 2xl:text-3xl font-bold text-left">
+            <div className="flex mr-auto text-black">
+              <span className="text-2xl font-bold text-left 2xl:text-3xl">
                 Customers
               </span>
             </div>
@@ -168,21 +203,21 @@ const Customers = () => {
             <div className="grid grid-cols-2 align-middle py-[40px] px-[40px] 2xl:px-[68px] gap-5">
               <div className="flex max-w-[765px] w-full h-[90px] border-1 border-solid border-aliceblue bg-white rounded-lg items-center cursor-pointer transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-98 duration-300">
                 {/* <div className="w-[55px] h-[55px] ml-[20px] rounded-full shimmer" /> */}
-                <div className="flex flex-col justify-center items-start p-6">
+                <div className="flex flex-col items-start justify-center p-6">
                   <div className="w-[180px] h-[20px] mb-1 shimmer" />
                   <div className="w-[150px] h-[18px] shimmer" />
                 </div>
-                <div className="flex flex-col content-end justify-center items-center ml-auto mr-11">
+                <div className="flex flex-col items-center content-end justify-center ml-auto mr-11">
                   <div className="w-[30px] h-[30px] shimmer" />
                 </div>
               </div>
               <div className="flex max-w-[765px] w-full h-[90px] border-1 border-solid border-aliceblue bg-white rounded-lg items-center cursor-pointer transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-98 duration-300">
                 {/* <div className="w-[55px] h-[55px] ml-[20px] rounded-full shimmer" /> */}
-                <div className="flex flex-col justify-center items-start p-6">
+                <div className="flex flex-col items-start justify-center p-6">
                   <div className="w-[180px] h-[20px] mb-1 shimmer" />
                   <div className="w-[150px] h-[18px] shimmer" />
                 </div>
-                <div className="flex flex-col content-end justify-center items-center ml-auto mr-11">
+                <div className="flex flex-col items-center content-end justify-center ml-auto mr-11">
                   <div className="w-[30px] h-[30px] shimmer" />
                 </div>
               </div>
@@ -210,15 +245,15 @@ const Customers = () => {
                         className="w-[55px] h-[55px] rounded-full"
                       />
                     </div> */}
-                      <div className="flex flex-col justify-center items-center p-6 text-left">
-                        <span className="2xl:text-xl text-lg text-left font-semibold mr-auto">
+                      <div className="flex flex-col items-center justify-center p-6 text-left">
+                        <span className="mr-auto text-lg font-semibold text-left 2xl:text-xl">
                           {customer.name}
                         </span>
                         <span className="2xl:text-lg text-[16px] mr-auto">
                           {customer.phone}
                         </span>
                       </div>
-                      <div className="flex flex-col content-end justify-center items-center ml-auto mr-11">
+                      <div className="flex flex-col items-center content-end justify-center ml-auto mr-11">
                         <span className="text-right ml-auto w-[15px]">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -264,33 +299,41 @@ const Customers = () => {
             width={700}
           >
             <div className="flex mt-[10px] flex-row justify-start items-start ml-5">
-              <svg
-                className="h-8 w-8 text-black cursor-pointer"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                strokeWidth="2"
-                stroke="currentColor"
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                onClick={onClose}
-              >
-                {" "}
-                <path stroke="none" d="M0 0h24v24H0z" />{" "}
-                <line x1="18" y1="6" x2="6" y2="18" />{" "}
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
+              <div className="flex justify-between w-full ">
+                <svg
+                  className="w-8 h-8 text-black cursor-pointer"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  stroke="currentColor"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  onClick={onClose}
+                >
+                  {" "}
+                  <path stroke="none" d="M0 0h24v24H0z" />{" "}
+                  <line x1="18" y1="6" x2="6" y2="18" />{" "}
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+                <button
+                  className="px-4 py-2 mb-4 text-white cursor-pointer bg-aliceblue disabled:opacity-40 disabled:cursor-not-allowed"
+                  onClick={viewInventory}
+                >
+                  View Inventory
+                </button>
+              </div>
             </div>
-            <div className="flex flex-row ml-5 mt-3">
-              <span className="2xl:text-3xl text-2xl  font-extrabold mt-4">
+            <div className="flex flex-row mt-3 ml-5">
+              <span className="mt-4 text-2xl font-extrabold 2xl:text-3xl">
                 Customer Details
               </span>
             </div>
             {custDetails === null ? (
               <>
-                <div className="fixed inset-0 bg-gray-500 opacity-100 z-50"></div>
-                <div className=" flex justify-center items-center w-full h-full transition ease-in delay-300 ">
+                <div className="fixed inset-0 z-50 bg-gray-500 opacity-100"></div>
+                <div className="flex items-center justify-center w-full h-full transition ease-in delay-300 ">
                   <Spin size="large" />
                 </div>
               </>
@@ -305,13 +348,13 @@ const Customers = () => {
                         alt="user"
                       />
                     </div> */}
-                    {/* <div className="flex flex-col m-4 pl-3">
-                      <span className="text-base 2xl:text-lg text-left font-semibold mr-auto">
+                    {/* <div className="flex flex-col pl-3 m-4">
+                      <span className="mr-auto text-base font-semibold text-left 2xl:text-lg">
                         {custDetails.topInfo.name
                           ? custDetails.topInfo.name
                           : ""}
                       </span>
-                      <span className="2xl:text-base text-sm font-normal">
+                      <span className="text-sm font-normal 2xl:text-base">
                         {custDetails.topInfo.phone
                           ? custDetails.topInfo.phone
                           : ""}
@@ -319,40 +362,40 @@ const Customers = () => {
                     </div> */}
                     <div className="flex flex-row w-full">
                       <div className="flex flex-col max-w-[60%] w-full justify-start items-center mr-auto ml-5 pr-4">
-                        <span className="text-base 2xl:text-lg text-left font-semibold mr-auto m-1 ">
+                        <span className="m-1 mr-auto text-base font-semibold text-left 2xl:text-lg ">
                           Name
                         </span>
-                        <span className="text-base 2xl:text-lg font-normal mr-auto m-1">
+                        <span className="m-1 mr-auto text-base font-normal 2xl:text-lg">
                           {custDetails ? custDetails.topInfo.name : "-"}
                         </span>
                       </div>
                       <div className="flex flex-col items-center max-w-[40%] w-full justify-start pr-9">
-                        <span className="text-base 2xl:text-lg text-left font-semibold mr-auto m-1">
+                        <span className="m-1 mr-auto text-base font-semibold text-left 2xl:text-lg">
                           Phone Number
                         </span>
-                        <span className="text-base 2xl:text-lg font-normal mr-auto m-1">
+                        <span className="m-1 mr-auto text-base font-normal 2xl:text-lg">
                           {custDetails ? custDetails.topInfo.phone : "-"}
                         </span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex flex-col w-full mt-8 text-base 2xl:text-lg relative">
+                  <div className="relative flex flex-col w-full mt-8 text-base 2xl:text-lg">
                     <div className="flex flex-row justify-around">
                       <div className="flex flex-col max-w-[60%] w-full justify-start items-center mr-auto ml-5 pr-4">
                         <span className="2xl:text-[18px] text-base text-left font-semibold mr-auto m-1 ">
                           Addressline 1
                         </span>
-                        <span className="font-normal mr-auto m-1">
+                        <span className="m-1 mr-auto font-normal">
                           {custDetails.topInfo.line1
                             ? custDetails.topInfo.line1
                             : ""}
                         </span>
                       </div>
                       <div className="flex flex-col items-center max-w-[40%] w-full justify-start pr-8">
-                        <span className="2xl:text-lg text-base  text-left font-semibold mr-auto mt-1">
+                        <span className="mt-1 mr-auto text-base font-semibold text-left 2xl:text-lg">
                           Addressline 2
                         </span>
-                        <span className=" font-normal mr-auto mt-2">
+                        <span className="mt-2 mr-auto font-normal ">
                           {custDetails.topInfo.line2
                             ? custDetails.topInfo.line2
                             : ""}
@@ -361,42 +404,42 @@ const Customers = () => {
                     </div>
                     <div className="flex flex-row justify-around mt-10">
                       <div className="flex flex-col max-w-[60%] w-full justify-start items-center mr-auto ml-5 pr-4">
-                        <span className="text-left font-semibold mr-auto m-1">
+                        <span className="m-1 mr-auto font-semibold text-left">
                           State
                         </span>
-                        <span className=" font-normal mr-auto m-1">
+                        <span className="m-1 mr-auto font-normal ">
                           {custDetails.topInfo.state
                             ? custDetails.topInfo.state
                             : ""}
                         </span>
                       </div>
                       <div className="flex flex-col items-center max-w-[40%] w-full justify-start pr-8">
-                        <span className=" text-left font-semibold mr-auto mt-1">
+                        <span className="mt-1 mr-auto font-semibold text-left ">
                           Pincode
                         </span>
-                        <span className="font-normal mr-auto mt-2">
+                        <span className="mt-2 mr-auto font-normal">
                           {custDetails.topInfo.pincode
                             ? custDetails.topInfo.pincode
                             : ""}
                         </span>
                       </div>
                     </div>
-                    {/* <div className="flex flex-row w-full justify-around mt-10">
+                    {/* <div className="flex flex-row justify-around w-full mt-10">
                       <div className="flex flex-col max-w-[60%] w-full justify-start items-center mr-auto ml-5 pr-4">
-                        <span className=" text-left font-semibold mr-auto m-1">
+                        <span className="m-1 mr-auto font-semibold text-left ">
                           Approval Status
                         </span>
-                        <span className=" font-normal mr-auto m-1">
+                        <span className="m-1 mr-auto font-normal ">
                           {custDetails?.topInfo?.aproovedStatus
                             ? "Approved"
                             : "Pending"}
                         </span>
                       </div>
                       <div className="flex flex-col items-center max-w-[40%] w-full justify-start pr-8">
-                        <span className=" text-left font-semibold mr-auto mt-1">
+                        <span className="mt-1 mr-auto font-semibold text-left ">
                           Aadhar No
                         </span>
-                        <span className=" text-left font-normal mr-auto mt-2">
+                        <span className="mt-2 mr-auto font-normal text-left ">
                           {custDetails.topInfo.aadhaarnumber
                             ? custDetails.topInfo.aadhaarnumber
                             : ""}
@@ -407,21 +450,21 @@ const Customers = () => {
                 </div>
                 {/* {custDetails.topInfo.aproovedStatus ? ( */}
                 <div>
-                  <div className="flex flex-row ml-5 mt-3">
+                  <div className="flex flex-row mt-3 ml-5">
                     <div className="block">
-                      <span className="2xl:text-3xl text-2xl text-left font-extrabold mr-auto">
+                      <span className="mr-auto text-2xl font-extrabold text-left 2xl:text-3xl">
                         Credit Limit
                       </span>
                     </div>
-                    <div className="block ml-auto p-5 mr-3 text-left">
-                      <span className="text-sm 2xl:text-base font-normal">
+                    <div className="block p-5 ml-auto mr-3 text-left">
+                      <span className="text-sm font-normal 2xl:text-base">
                         Available Limit-₹
                         {custDetails.creditLimit - custDetails.creditUsed}
                       </span>
                     </div>
                   </div>
-                  <div className="flex flex-row w-full justify-center items-center">
-                    <div className="block relative">
+                  <div className="flex flex-row items-center justify-center w-full">
+                    <div className="relative block">
                       <Progress
                         percent={
                           (custDetails.creditUsed / custDetails.creditLimit) *
@@ -453,42 +496,237 @@ const Customers = () => {
                     </div>
                   </div>
                   <div className="flex flex-row w-full mt-2">
-                    <div className="block text-sm 2xl:text-base ml-4">₹00</div>
-                    <div className="block ml-auto text-sm 2xl:text-base mr-8">
+                    <div className="block ml-4 text-sm 2xl:text-base">₹00</div>
+                    <div className="block ml-auto mr-8 text-sm 2xl:text-base">
                       ₹{parseInt(custDetails.creditLimit)}
                     </div>
                   </div>
-                  <div className="flex flex-row ml-5 mt-3 ">
+                  <div className="flex flex-row mt-3 ml-5 ">
                     <div className="block">
-                      <span className="text-2xl 2xl:text-3xl text-left font-extrabold mr-auto">
+                      <span className="mr-auto text-2xl font-extrabold text-left 2xl:text-3xl">
                         Ongoing Transactions
                       </span>
                     </div>
                   </div>
                   {custDetails.creditUsed ? (
                     <div className="w-[600px] h-[55px] bg-lightBlue border-1 border-solid border-blue rounded-lg flex flex-row items-center ml-6 mt-6">
-                      <span className="text-base 2xl:text-lg ml-5">
+                      <span className="ml-5 text-base 2xl:text-lg">
                         Transaction ID - {custDetails.onGoingTreatments}
                       </span>
-                      <span className="ml-auto mr-5 text-red text-base 2xl:text-lg ">
+                      <span className="ml-auto mr-5 text-base text-red 2xl:text-lg ">
                         Pending
                       </span>
                     </div>
                   ) : (
-                    <div className="flex flex-row w-full mt-8 mb-10 justify-center items-center 2xl:text-lg text-base">
+                    <div className="flex flex-row items-center justify-center w-full mt-8 mb-10 text-base 2xl:text-lg">
                       <div className="block">No Ongoing Transactions</div>
                     </div>
                   )}
                 </div>
                 {/* // ) : (
                 //   <div className="w-[600px] h-[55px] bg-lightYellow border-1 border-solid border-yellow rounded-lg flex flex-row items-center ml-6">
-                //     <span className="text-base 2xl:text-lg text-yellow ml-5">
+                //     <span className="ml-5 text-base 2xl:text-lg text-yellow">
                 //       The Account is under processing.
                 //     </span>
                 //   </div>
                 // )} */}
               </div>
             )}
+          </Drawer>
+
+          {/* inventory drawer */}
+          <Drawer
+            placement="right"
+            closable={false}
+            onClose={onCloseInventory}
+            open={showInventoryDetails}
+            key="rightInventoryDetails"
+            width={700}
+          >
+            <div className="flex mt-[10px] flex-row justify-start items-start ml-5">
+              <div className="flex justify-between w-full ">
+                <svg
+                  className="w-8 h-8 text-black cursor-pointer"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  stroke="currentColor"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  onClick={onCloseInventory}
+                >
+                  {" "}
+                  <path stroke="none" d="M0 0h24v24H0z" />{" "}
+                  <line x1="18" y1="6" x2="6" y2="18" />{" "}
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </div>
+            </div>
+            <div className="flex flex-row mt-3 ml-5">
+              <span className="mt-4 text-2xl font-extrabold 2xl:text-3xl">
+                Inventory Details
+              </span>
+            </div>
+            {inventoryDetails === null ? (
+              <>
+                <div className="fixed inset-0 z-50 bg-gray-500 opacity-100"></div>
+                <div className="flex items-center justify-center w-full h-full transition ease-in delay-300 ">
+                  <Spin size="large" />
+                </div>
+              </>
+            ) : (
+              <>
+                {inventoryDetails && inventoryDetails.length > 0 ? (
+                  <div>
+                    <div className="flex max-w-[600px] py-8 mb-8 h-full flex-col  m-5">
+                      <table className="min-w-full">
+                        <thead className="text-gray-900">
+                          <tr className="py-1 pl-2 pr-2 bg-gray-50">
+                            <th
+                              scope="col"
+                              className="py-3.5 pl-4 text-left sm:pl-0"
+                            >
+                              Product
+                            </th>
+                            <th
+                              scope="col"
+                              className="hidden  py-3.5 text-right sm:table-cell"
+                            >
+                              Price
+                            </th>
+                            <th
+                              scope="col"
+                              className="hidden  px-3 py-3.5 text-right sm:table-cell"
+                            >
+                              Qty
+                            </th>
+                            <th
+                              scope="col"
+                              className="py-3.5 pl-3 pr-4 text-right sm:pr-0"
+                            >
+                              Total Price
+                            </th>
+                            <th
+                              scope="col"
+                              className="py-3.5 invisible pl-3 pr-4 text-right sm:pr-0"
+                            >
+                              send offer
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {inventoryDetails &&
+                            inventoryDetails.map((inventory, index) => (
+                              <tr
+                                key={index}
+                                className="border-solid border-b-1"
+                              >
+                                <td className="py-5 pl-4 pr-10 text-sm sm:pl-0 max-w-0">
+                                  <div className="text-base font-medium text-gray-900">
+                                    {inventory.productName}
+                                  </div>
+                                  {/* <div className="mt-1 text-gray-400">
+                                {inventory.productCategory}
+                              </div> */}
+                                </td>
+                                <td className="table-cell px-3 py-5 text-base text-right text-gray-600">
+                                  ₹{inventory.retailPrice.toFixed(2)}
+                                </td>
+                                <td className="table-cell px-3 py-5 text-base text-right text-gray-600">
+                                  {inventory.quantity}
+                                </td>
+                                <td className="py-5 pl-3 pr-4 text-base text-right text-gray-600 sm:pr-0">
+                                  ₹
+                                  {(
+                                    inventory.quantity * inventory.retailPrice
+                                  ).toFixed(2)}
+                                </td>
+                                <td className="py-5 pl-3 pr-4 text-base text-right text-gray-600 sm:pr-0">
+                                  <button
+                                    className="px-2 py-1 text-white cursor-pointer bg-blue disabled:opacity-40 disabled:cursor-not-allowed"
+                                    disabled={inventory.quantity > 5}
+                                    onClick={sendScheme}
+                                  >
+                                    Send scheme
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex w-full justify-center items-center pt-[200px] font-semibold text-xl">
+                    Inventory is empty.
+                  </div>
+                )}
+              </>
+            )}
+          </Drawer>
+
+          {/* scheme drawer */}
+          <Drawer
+            placement="right"
+            closable={false}
+            onClose={onCloseScheme}
+            open={showSchemeDetails}
+            key="rightSchemeDetails"
+            width={700}
+          >
+            <div className="flex mt-[10px] flex-row justify-start items-start ml-5">
+              <div className="flex justify-between w-full ">
+                <svg
+                  className="w-8 h-8 text-black cursor-pointer"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  stroke="currentColor"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  onClick={onCloseScheme}
+                >
+                  {" "}
+                  <path stroke="none" d="M0 0h24v24H0z" />{" "}
+                  <line x1="18" y1="6" x2="6" y2="18" />{" "}
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </div>
+            </div>
+            <div className="flex flex-col mt-3 ml-5">
+              <span className="mt-4 text-2xl font-extrabold 2xl:text-3xl">
+                Scheme Details
+              </span>
+              <div className="flex flex-col pr-6 mt-10 gap-y-4">
+                <div className="flex flex-col gap-y-3">
+                  <label htmlFor="schemeTitle" className="font-semibold">
+                    Title
+                  </label>
+                  <input
+                    type="text"
+                    name="schemeTitle"
+                    id="schemeTitle"
+                    className="w-full p-2 text-xl font-medium focus:outline-none"
+                  />
+                </div>
+                <div className="flex flex-col gap-y-3">
+                  <label htmlFor="schemeDesc" className="font-semibold">
+                    Description
+                  </label>
+                  <textarea
+                    name="schemeDesc"
+                    id="schemeDesc"
+                    cols="30"
+                    rows="10"
+                    className="w-full p-2 text-sm font-normal focus:outline-none"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
           </Drawer>
         </div>
       </div>

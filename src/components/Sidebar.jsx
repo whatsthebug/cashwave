@@ -2,6 +2,7 @@ import React from "react";
 import Logo from "../image/Home.png";
 import { useNavigate } from "react-router-dom";
 import { BsPerson, BsQuestionCircle, BsCartCheck } from "react-icons/bs"; //BsHEart for treatments
+import { MdOutlineLocalOffer } from "react-icons/md";
 
 const Sidebar = () => {
   const [selectedTab, setSelectedTab] = React.useState(() => {
@@ -35,7 +36,10 @@ const Sidebar = () => {
             alt="logo"
           />
         </div>
-        <div className="flex flex-col justify-start w-full text-left">
+        <div
+          className="flex flex-col justify-start w-full overflow-y-scroll text-left max-h-[450px]"
+          id="sidebar"
+        >
           <ul className="font-normal text-base 2xl:text-lg leading-[70px] text-left pl-0 mr-auto ml-0 2xl:ml-0">
             <li
               className={`flex flex-row 2xl:w-[190px] xl:w-[175px] cursor-pointer items-center text-white`}
@@ -196,6 +200,26 @@ const Sidebar = () => {
                 <BsCartCheck size={24} className="w-full" />
               </div>
               Products
+            </li>
+            <li
+              className="flex items-center justify-start text-white cursor-pointer"
+              onClick={() => {
+                setSelectedTab("schemes");
+                navigate("/schemes");
+              }}
+              style={
+                selectedTab === "schemes"
+                  ? {
+                      backgroundColor: "rgba(255, 255, 255, 0.2)",
+                      borderRadius: 10,
+                    }
+                  : {}
+              }
+            >
+              <div className="flex items-center mx-2">
+                <MdOutlineLocalOffer size={24} className="w-full" />
+              </div>
+              Schemes
             </li>
             {/* <li
               className="flex items-center justify-start text-white cursor-pointer"
