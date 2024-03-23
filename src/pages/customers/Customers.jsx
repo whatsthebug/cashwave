@@ -19,7 +19,23 @@ const Customers = () => {
   const [loading, setLoading] = React.useState(true);
   const [drawers, setDrawers] = React.useState(false);
   const { baseUrl } = React.useContext(FormContext);
+  const [custId, setcustId] = React.useState("");
+  const [productId, setProductId] = React.useState("");
+
+  const [schemeDetails, setSchemeDetails] = React.useState({
+    schemeTitle: "",
+    schemeDesc: "",
+  });
+
+  const handleChange = async (e) => {
+    setSchemeDetails((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
   console.log(baseUrl);
+  // console.log(schemeDetails);
   let navigate = useNavigate();
   const onCloseAadhaar = () => {
     setDrawers(false);
@@ -94,10 +110,34 @@ const Customers = () => {
     setInventoryDetails(data);
   };
 
-  const sendScheme = async () => {
+  const sendScheme = async (productId) => {
+    setProductId(productId);
     setShowInventoryDetails(false);
     setShowSchemeDetails(true);
   };
+
+  const updateScheme = async () => {
+    try {
+      await axios.put(
+        `${baseUrl}/Hospitals/updateScheme?custId=${custId}&productId=${productId}`,
+        schemeDetails,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          withCredentials: "include",
+        }
+      );
+    } catch (error) {
+      throw error;
+    } finally {
+      setSchemeDetails({
+        schemeTitle: "",
+        schemeDesc: "",
+      });
+    }
+  };
+
   React.useEffect(() => {
     fetchCustomers();
     if (isFormSubmitted) {
@@ -231,7 +271,10 @@ const Customers = () => {
                   .map((customer, index) => (
                     <div
                       className={`flex max-w-[765px] w-full h-[90px] border-1 border-solid border-aliceblue bg-lightBlue rounded-lg cursor-pointer transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-98 duration-300`}
-                      onClick={() => handleClick(customer._id)}
+                      onClick={() => {
+                        handleClick(customer._id);
+                        setcustId(customer._id);
+                      }}
                       key={index}
                     >
                       {/* <div className="flex w-[55px] mt-[20px] ml-[20px] flex-row items-start rounded-full overflow-hidden">
@@ -647,7 +690,9 @@ const Customers = () => {
                                   <button
                                     className="px-2 py-1 text-white cursor-pointer bg-blue disabled:opacity-40 disabled:cursor-not-allowed"
                                     disabled={inventory.quantity > 5}
-                                    onClick={sendScheme}
+                                    onClick={() =>
+                                      sendScheme(inventory.productId)
+                                    }
                                   >
                                     Send scheme
                                   </button>
@@ -710,7 +755,9 @@ const Customers = () => {
                     type="text"
                     name="schemeTitle"
                     id="schemeTitle"
+                    value={schemeDetails.schemeTitle}
                     className="w-full p-2 text-xl font-medium focus:outline-none"
+                    onChange={handleChange}
                   />
                 </div>
                 <div className="flex flex-col gap-y-3">
@@ -720,10 +767,20 @@ const Customers = () => {
                   <textarea
                     name="schemeDesc"
                     id="schemeDesc"
+                    value={schemeDetails.schemeDesc}
                     cols="30"
                     rows="10"
                     className="w-full p-2 text-sm font-normal focus:outline-none"
+                    onChange={handleChange}
                   ></textarea>
+                </div>
+                <div>
+                  <button
+                    className="px-4 py-2 text-white bg-aliceblue"
+                    onClick={updateScheme}
+                  >
+                    Send scheme
+                  </button>
                 </div>
               </div>
             </div>
